@@ -668,7 +668,6 @@ Before I implement this button, I have a few design questions:
 ```tsx
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from '@phosphor-icons/react'
-
 ;<Button className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-lg transition-colors duration-200">
   Get Started
   <ArrowRight className="ml-2" />
