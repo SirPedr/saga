@@ -319,3 +319,34 @@ When adding a complete new feature domain:
 - [ ] Run `pnpm db:generate && pnpm db:migrate` after schema changes
 
 When only adding to an existing feature, touch only the files that need changing. Don't create new files unless necessary.
+
+---
+
+## After implementation
+
+Once the implementation is complete and working, do both of these:
+
+### 1. Update `docs/PLANNING.md`
+
+Mark the relevant task(s) as complete by changing their status from `[ ]` or `[~]` to `[x]`. The file uses the format:
+
+```
+**Status:** `[x]` | **Depends:** …
+```
+
+### 2. Close the GitHub issue (if applicable)
+
+If the work was requested as part of a GitHub issue, close it using the GitHub MCP tool:
+
+```
+mcp__github__issue_write({
+  method: "update",
+  owner: <repo-owner>,
+  repo: <repo-name>,
+  issue_number: <issue-number>,
+  state: "closed",
+  state_reason: "completed"
+})
+```
+
+If you don't know the issue number or which PLANNING.md task to mark, ask the user before making any changes.
