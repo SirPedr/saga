@@ -1,4 +1,4 @@
-import { authClient } from '#/lib/auth-client'
+import { authClient } from '#/features/auth/server/auth-client'
 import { Link } from '@tanstack/react-router'
 
 export default function BetterAuthHeader() {

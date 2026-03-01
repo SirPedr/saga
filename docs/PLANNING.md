@@ -117,7 +117,7 @@ BETTER_AUTH_SECRET=
 ---
 
 ### T02 · Establish feature-based directory structure
-**Status:** `[ ]` | **Depends:** T01
+**Status:** `[x]` | **Depends:** T01
 
 **Create directories** (add `.gitkeep` in each leaf):
 ```
