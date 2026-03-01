@@ -351,9 +351,17 @@ When only adding to an existing feature, touch only the files that need changing
 
 ## After implementation
 
-Once the implementation is complete and working, do both of these:
+Once the implementation is complete and working, do all of these:
 
-### 1. Update `docs/PLANNING.md`
+### 1. Run `pnpm check`
+
+Run `pnpm check` (Prettier + ESLint autofix) and fix any errors it reports before considering the task done.
+
+### 2. Commit the changes
+
+Commit all changed files using conventional commit messages. Split into multiple commits if the changes span different domains or concerns (e.g. schema changes separate from UI changes, or unrelated features). Use the `/conventional-commit` skill if available.
+
+### 3. Update `docs/PLANNING.md`
 
 Mark the relevant task(s) as complete by changing their status from `[ ]` or `[~]` to `[x]`. The file uses the format:
 
@@ -361,7 +369,7 @@ Mark the relevant task(s) as complete by changing their status from `[ ]` or `[~
 **Status:** `[x]` | **Depends:** …
 ```
 
-### 2. Close the GitHub issue (if applicable)
+### 4. Close the GitHub issue (if applicable)
 
 If the work was requested as part of a GitHub issue, close it using the GitHub MCP tool:
 
