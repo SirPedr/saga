@@ -335,15 +335,11 @@ export const auth = betterAuth({
 
 ### T08 · Auth guard — `_authenticated` layout route
 
-**Status:** `[ ]` | **Depends:** T07
+**Status:** `[x]` | **Depends:** T07
 
-**Create `src/routes/_authenticated.tsx`:**
+**Implemented as global request middleware** in `src/start.ts` (using `createStart` + `createMiddleware`) rather than a layout route. Runs on every server request (SSR, server functions, API routes). Public paths `/login` and `/api/auth/*` are exempt; all others redirect to `/login` if no session.
 
-- On `beforeLoad`: call `auth.api.getSession` (server-side). If no session, `throw redirect({ to: '/login' })`.
-- Export session via `loaderData` or context for child routes to consume.
-- Render `<Outlet />` — no UI in this file.
-
-**Done when:** Navigating to any `/_authenticated/*` route without a session redirects to `/login`.
+**Done when:** Navigating to any route without a session redirects to `/login`.
 
 ---
 
