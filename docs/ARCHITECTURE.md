@@ -109,9 +109,9 @@ Code is organized by **feature/domain** rather than technical layer. Each featur
 
 ```
 src/
+  start.ts                         # TanStack Start entry — global request middleware (auth guard)
   routes/                          # TanStack Start file-based routes (thin shells only)
     __root.tsx
-    _authenticated.tsx
     campaigns/
       index.tsx
       $campaignId/
@@ -227,6 +227,29 @@ src/
 Use **Better Auth** for session-based authentication. Better Auth integrates natively with Drizzle and manages its own user/session tables. Configure it to use the same Postgres instance.
 
 Since this is a single-user application, no role-based access control is required. All authenticated routes simply verify a valid session exists.
+
+### Auth Guard
+
+Authentication is enforced globally via a TanStack Start **request middleware** in `src/start.ts`. The middleware runs before every server request — including SSR page loads, client-side navigations, and server function calls — and redirects to `/login` if no session is found.
+
+```typescript
+// src/start.ts
+const authMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const { pathname } = new URL(request.url)
+  const isPublic = ['/login', '/api/auth'].some((p) => pathname.startsWith(p))
+  if (!isPublic) {
+    const session = await auth.api.getSession({ headers: request.headers })
+    if (!session) throw redirect({ to: '/login' })
+  }
+  return next()
+})
+
+export const startInstance = createStart(() => ({
+  requestMiddleware: [authMiddleware],
+}))
+```
+
+Public paths that bypass the guard: `/login`, `/api/auth/*`.
 
 ---
 
