@@ -308,7 +308,7 @@ export async function runMigrations() {
 
 ### T07 · Wire Better Auth to Drizzle adapter
 
-**Status:** `[ ]` | **Depends:** T06
+**Status:** `[x]` | **Depends:** T06
 
 **Install:** `pnpm add @better-auth/drizzle-adapter` (check current Better Auth docs — adapter may be bundled)
 
