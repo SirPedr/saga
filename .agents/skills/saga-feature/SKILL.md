@@ -20,6 +20,7 @@ description: >
 
 Read `docs/ARCHITECTURE.md` for the full picture: data model, API contracts, AI layer, and all tech choices.
 Refer to it freely while implementing. The sections most relevant to any given task:
+
 - **Section 4** — project folder structure and conventions
 - **Section 6** — data model / entity reference
 - **Section 7** — AI layer (Mastra, agents, workflows)
@@ -74,7 +75,9 @@ import { campaigns } from '#/features/campaigns/db/schema'
 
 export const npcs = pgTable('npcs', {
   id: uuid('id').primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   portraitUrl: text('portrait_url'),
   tokenUrl: text('token_url'),
@@ -101,7 +104,11 @@ export async function getNpcsByCampaign(campaignId: string) {
 }
 
 export async function getNpcById(id: string) {
-  return db.select().from(npcs).where(eq(npcs.id, id)).then(r => r[0] ?? null)
+  return db
+    .select()
+    .from(npcs)
+    .where(eq(npcs.id, id))
+    .then((r) => r[0] ?? null)
 }
 ```
 
@@ -139,7 +146,11 @@ export const createNpc = createServerFn({ method: 'POST' })
     const session = await auth.api.getSession({ headers: request.headers })
     if (!session) throw new Error('Unauthorized')
 
-    return db.insert(npcs).values(data).returning().then(r => r[0])
+    return db
+      .insert(npcs)
+      .values(data)
+      .returning()
+      .then((r) => r[0])
   })
 ```
 
@@ -229,7 +240,13 @@ import { useForm } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { createNpcSchema } from '../schemas'
 
-export function NpcForm({ campaignId, onSuccess }: { campaignId: string; onSuccess: () => void }) {
+export function NpcForm({
+  campaignId,
+  onSuccess,
+}: {
+  campaignId: string
+  onSuccess: () => void
+}) {
   const form = useForm({
     defaultValues: { name: '', campaignId },
     validatorAdapter: zodValidator(),
@@ -241,7 +258,12 @@ export function NpcForm({ campaignId, onSuccess }: { campaignId: string; onSucce
   })
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); form.handleSubmit() }}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        form.handleSubmit()
+      }}
+    >
       <form.Field name="name">
         {(field) => (
           <div>
@@ -252,12 +274,16 @@ export function NpcForm({ campaignId, onSuccess }: { campaignId: string; onSucce
               onChange={(e) => field.handleChange(e.target.value)}
             />
             {field.state.meta.errors.map((err) => (
-              <p key={err?.toString()} className="text-destructive text-sm">{err}</p>
+              <p key={err?.toString()} className="text-destructive text-sm">
+                {err}
+              </p>
             ))}
           </div>
         )}
       </form.Field>
-      <button type="submit" disabled={form.state.isSubmitting}>Save</button>
+      <button type="submit" disabled={form.state.isSubmitting}>
+        Save
+      </button>
     </form>
   )
 }
@@ -284,6 +310,7 @@ For rich text fields (session notes, outcome notes, lore descriptions): use **Ti
 When a feature involves AI, work within the existing Mastra setup at `features/ai/index.ts`.
 
 **Adding a new tool** — tools live in `features/ai/tools/`:
+
 ```ts
 // features/ai/tools/get-faction-data.ts
 import { createTool } from '@mastra/core'

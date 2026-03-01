@@ -21,6 +21,7 @@ description: >
 Kent C. Dodds' guiding principle: **test behavior, not implementation**. Users don't care about internal state or private methods — they care about what they can see and do. Write tests that interact with the UI the way a real person would, and assert on what they'd observe.
 
 Key tenets:
+
 - Test what users experience, not how the code is structured
 - Prefer integration tests over micro-unit tests
 - Avoid mocking unless you're at a real system boundary (network, browser API)
@@ -33,11 +34,13 @@ Key tenets:
 **Stack**: Vitest + jsdom + @testing-library/react
 
 **Required — install if missing:**
+
 ```bash
 pnpm add -D @testing-library/user-event @testing-library/jest-dom
 ```
 
 **Vitest config** — confirm `vite.config.ts` has a `test` block, or create `vitest.config.ts`:
+
 ```ts
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
@@ -54,6 +57,7 @@ export default defineConfig({
 ```
 
 **Setup file** (`src/test/setup.ts`) — this is where global mocks live, not in individual test files:
+
 ```ts
 import '@testing-library/jest-dom'
 import { vi, beforeEach, afterEach } from 'vitest'
@@ -85,6 +89,7 @@ Browser API mocks like `matchMedia` and `localStorage.clear()` belong in the glo
 ## File Placement & Naming
 
 Co-locate test files next to the source file:
+
 ```
 src/
   components/
@@ -116,7 +121,9 @@ Use `screen.*` for all queries — never destructure from `render()`.
 
 ```tsx
 screen.getByRole('button', { name: /Auto/i })
-screen.getByRole('button', { name: 'Theme mode: auto (system). Click to switch to light mode.' })
+screen.getByRole('button', {
+  name: 'Theme mode: auto (system). Click to switch to light mode.',
+})
 screen.getByRole('heading', { name: /settings/i })
 ```
 
@@ -127,13 +134,17 @@ screen.getByRole('heading', { name: /settings/i })
 Choose the most semantically accurate assertion. The more specific the matcher, the more confidence the test gives:
 
 **For visibility** — prefer `toBeVisible()` over `toBeInTheDocument()`. Being in the document is a weaker guarantee than being visible to the user.
+
 ```tsx
 expect(screen.getByRole('button', { name: /submit/i })).toBeVisible()
 ```
 
 **For accessible names** — prefer `toHaveAccessibleName()` over `toHaveAttribute('aria-label', ...)`. Accessible names can come from aria-label, aria-labelledby, or visible text — `toHaveAccessibleName()` captures all of them correctly.
+
 ```tsx
-expect(button).toHaveAccessibleName('Theme mode: auto (system). Click to switch to light mode.')
+expect(button).toHaveAccessibleName(
+  'Theme mode: auto (system). Click to switch to light mode.',
+)
 ```
 
 Use `toHaveAttribute('aria-label', ...)` only when you specifically need to assert on the raw HTML attribute rather than the computed accessible name.
@@ -190,6 +201,7 @@ Use `it.each()` when 3 or more tests have the same shape. For just 2 tests, repe
 Components that use TanStack Query, Router, or Form need their providers. Create a shared render helper per test file (or in `src/test/utils.tsx` if reused widely):
 
 **TanStack Query:**
+
 ```tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render } from '@testing-library/react'
@@ -199,14 +211,19 @@ function renderWithQuery(ui: React.ReactElement) {
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   })
   return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
   )
 }
 ```
 
 **TanStack Router** (for components that call `useNavigate`, `useParams`, etc.):
+
 ```tsx
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
+import {
+  createMemoryHistory,
+  createRouter,
+  RouterProvider,
+} from '@tanstack/react-router'
 import { routeTree } from '#/routeTree.gen'
 
 function renderWithRouter(ui: React.ReactElement, { initialPath = '/' } = {}) {
@@ -267,7 +284,9 @@ import ThemeToggle from '#/components/ThemeToggle'
 describe('ThemeToggle', () => {
   it('shows auto mode by default', () => {
     render(<ThemeToggle />)
-    expect(screen.getByRole('button', { name: /theme mode: auto/i })).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: /theme mode: auto/i }),
+    ).toBeVisible()
   })
 
   it('cycles through modes on click', async () => {
@@ -275,13 +294,19 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />)
 
     await user.click(screen.getByRole('button', { name: /theme mode: auto/i }))
-    expect(screen.getByRole('button', { name: /theme mode: light/i })).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: /theme mode: light/i }),
+    ).toBeVisible()
 
     await user.click(screen.getByRole('button', { name: /theme mode: light/i }))
-    expect(screen.getByRole('button', { name: /theme mode: dark/i })).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: /theme mode: dark/i }),
+    ).toBeVisible()
 
     await user.click(screen.getByRole('button', { name: /theme mode: dark/i }))
-    expect(screen.getByRole('button', { name: /theme mode: auto/i })).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: /theme mode: auto/i }),
+    ).toBeVisible()
   })
 })
 ```
@@ -309,7 +334,9 @@ Mock at the network level with `vi.fn()` on the query function, or use `msw` for
 import { vi } from 'vitest'
 
 vi.mock('#/lib/api', () => ({
-  fetchUser: vi.fn().mockResolvedValue({ name: 'Alice', email: 'alice@example.com' }),
+  fetchUser: vi
+    .fn()
+    .mockResolvedValue({ name: 'Alice', email: 'alice@example.com' }),
 }))
 
 it('displays user data after loading', async () => {

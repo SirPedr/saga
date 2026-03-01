@@ -26,20 +26,20 @@ Run a single test file: `pnpm vitest run src/path/to/file.test.ts`
 
 ## Stack
 
-| Concern | Technology |
-|---|---|
-| Framework | TanStack Start (Vite + Nitro + React 19) — fullstack Node.js, **not** edge/Workers |
-| Routing / SSR | TanStack Router (file-based) |
-| Server state | TanStack Query v5 |
-| Forms | TanStack Form v1 + Zod v4 |
-| Auth | Better Auth v1 |
-| ORM | Drizzle ORM + drizzle-kit (PostgreSQL + pgvector) |
-| Styling | Tailwind CSS v4 + shadcn/ui |
-| AI framework | Mastra (agents, workflows, vector store) |
-| AI models | Claude API (Haiku for analysis/RAG, Sonnet for planning) |
-| Graph viz | React Flow (`@xyflow/react`) |
-| Rich text | TipTap |
-| File uploads | Uppy → Cloudflare R2 (S3-compat) |
+| Concern       | Technology                                                                         |
+| ------------- | ---------------------------------------------------------------------------------- |
+| Framework     | TanStack Start (Vite + Nitro + React 19) — fullstack Node.js, **not** edge/Workers |
+| Routing / SSR | TanStack Router (file-based)                                                       |
+| Server state  | TanStack Query v5                                                                  |
+| Forms         | TanStack Form v1 + Zod v4                                                          |
+| Auth          | Better Auth v1                                                                     |
+| ORM           | Drizzle ORM + drizzle-kit (PostgreSQL + pgvector)                                  |
+| Styling       | Tailwind CSS v4 + shadcn/ui                                                        |
+| AI framework  | Mastra (agents, workflows, vector store)                                           |
+| AI models     | Claude API (Haiku for analysis/RAG, Sonnet for planning)                           |
+| Graph viz     | React Flow (`@xyflow/react`)                                                       |
+| Rich text     | TipTap                                                                             |
+| File uploads  | Uppy → Cloudflare R2 (S3-compat)                                                   |
 
 ## Project Structure
 
@@ -103,8 +103,9 @@ src/
 **Database schema is per-feature.** Each `features/*/db/schema.ts` exports only the tables owned by that feature. The Drizzle config glob must cover all `src/features/**/db/schema.ts` files.
 
 **Two AI agents with distinct roles:**
-- *Planning Agent* — conversational, thread-scoped memory (Mastra `PostgresStore`), streaming output, tools: `get_session_data`, `get_world_state`, `search_lore`
-- *Analysis Agent* — stateless, structured JSON output validated against Zod, runs as a Mastra Workflow after session debrief, tools: `get_recent_sessions`, `get_world_events`, `propose_world_event`
+
+- _Planning Agent_ — conversational, thread-scoped memory (Mastra `PostgresStore`), streaming output, tools: `get_session_data`, `get_world_state`, `search_lore`
+- _Analysis Agent_ — stateless, structured JSON output validated against Zod, runs as a Mastra Workflow after session debrief, tools: `get_recent_sessions`, `get_world_events`, `propose_world_event`
 
 **World events are an append-only log.** World state is never a mutable document — it is derived from approved events. The `world_event_types` table stores only a `key` that references a Zod schema defined in `features/world-events/event-schemas.ts`.
 

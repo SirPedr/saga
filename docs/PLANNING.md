@@ -9,28 +9,30 @@
 
 ### Stack (confirmed from package.json + scaffolding)
 
-| Concern | Technology | State |
-|---|---|---|
-| Framework | TanStack Start (Vite + Nitro + React 19) | installed |
-| Routing / SSR | TanStack Router (file-based) | installed |
-| Server state | TanStack Query v5 | installed |
-| Forms | TanStack Form v1 + Zod v4 | installed |
-| Auth | Better Auth v1 | installed, partially wired |
-| ORM | Drizzle ORM + drizzle-kit | installed, demo schema |
-| DB driver | `pg` (node-postgres) | installed |
-| Styling | Tailwind CSS v4 | installed |
-| UI components | shadcn/ui (components.json present) | installed |
-| AI framework | Mastra | **NOT installed** |
-| Graph viz | React Flow (`@xyflow/react`) | **NOT installed** |
-| Rich text | TipTap | **NOT installed** |
-| File uploads | Uppy | **NOT installed** |
-| File storage | Cloudflare R2 (S3-compat) | **NOT installed** |
-| PDF parsing | unpdf | **NOT installed** |
+| Concern       | Technology                               | State                      |
+| ------------- | ---------------------------------------- | -------------------------- |
+| Framework     | TanStack Start (Vite + Nitro + React 19) | installed                  |
+| Routing / SSR | TanStack Router (file-based)             | installed                  |
+| Server state  | TanStack Query v5                        | installed                  |
+| Forms         | TanStack Form v1 + Zod v4                | installed                  |
+| Auth          | Better Auth v1                           | installed, partially wired |
+| ORM           | Drizzle ORM + drizzle-kit                | installed, demo schema     |
+| DB driver     | `pg` (node-postgres)                     | installed                  |
+| Styling       | Tailwind CSS v4                          | installed                  |
+| UI components | shadcn/ui (components.json present)      | installed                  |
+| AI framework  | Mastra                                   | **NOT installed**          |
+| Graph viz     | React Flow (`@xyflow/react`)             | **NOT installed**          |
+| Rich text     | TipTap                                   | **NOT installed**          |
+| File uploads  | Uppy                                     | **NOT installed**          |
+| File storage  | Cloudflare R2 (S3-compat)                | **NOT installed**          |
+| PDF parsing   | unpdf                                    | **NOT installed**          |
 
 ### Import alias
+
 `#/*` → `./src/*` (configured in `package.json` imports field and `tsconfig.json`)
 
 ### Current repo state (all files untracked — no commits yet)
+
 - Demo routes: `src/routes/blog.*`, `about.tsx`, `rss[.]xml.ts` → **delete**
 - Demo components: `MdxCallout`, `MdxMetrics`, `demo.*`, `demo-store*`, `site.ts` → **delete**
 - Demo schema: `src/db/schema.ts` exports `todos` table → **replace**
@@ -42,6 +44,7 @@
 - `zod` duplicated in deps + devDeps → **canonicalize to deps only**
 
 ### Critical invariants (never violate)
+
 1. `get_world_state` and `getApprovedWorldEvents` queries **must** filter `status = 'approved'` only — the AI must never see pending proposals
 2. `propose_world_event` Mastra tool **must** run Zod validation before any DB write
 3. Server functions are server-only — **never** import API keys or Drizzle client in client-side code
@@ -49,6 +52,7 @@
 5. pgvector extension **must** be enabled before Mastra `PgVector` initializes
 
 ### Conventions
+
 - Route files are thin shells — import page components and server functions from `src/features/`, never the reverse
 - Feature owns: `components/`, `server/`, `db/schema.ts`, `db/queries.ts`, `schemas.ts`
 - Cross-feature imports are direct (no barrel re-exports that create cycles)
@@ -57,6 +61,7 @@
 - TanStack Query keys: `['campaigns']`, `['sessions', campaignId]`, `['npcs', campaignId]`, `['world-events', 'pending', campaignId]`, etc.
 
 ### Environment variables (all required)
+
 ```
 DATABASE_URL=
 ANTHROPIC_API_KEY=
@@ -72,6 +77,7 @@ BETTER_AUTH_SECRET=
 ---
 
 ## Task Status Key
+
 - `[ ]` pending
 - `[~]` in progress
 - `[x]` complete
@@ -81,9 +87,11 @@ BETTER_AUTH_SECRET=
 ## Phase 0 — Foundation Cleanup & Scaffolding
 
 ### T01 · Remove demo artifacts
+
 **Status:** `[x]` | **Depends:** —
 
 **Delete:**
+
 - `src/routes/blog.$slug.tsx`
 - `src/routes/blog.index.tsx`
 - `src/routes/about.tsx`
@@ -101,10 +109,12 @@ BETTER_AUTH_SECRET=
 - `content-collections.ts` (root)
 
 **Modify `vite.config.ts`:**
+
 - Remove `import contentCollections from '@content-collections/vite'`
 - Remove `contentCollections()` from plugins array
 
 **Modify `package.json`:**
+
 - Remove from `devDependencies`: `@content-collections/core`, `@content-collections/markdown`, `@content-collections/mdx`, `@content-collections/vite`
 - Remove `zod` from `devDependencies` (keep only in `dependencies`)
 
@@ -117,9 +127,11 @@ BETTER_AUTH_SECRET=
 ---
 
 ### T02 · Establish feature-based directory structure
+
 **Status:** `[x]` | **Depends:** T01
 
 **Create directories** (add `.gitkeep` in each leaf):
+
 ```
 src/features/campaigns/components/
 src/features/campaigns/server/
@@ -158,6 +170,7 @@ src/shared/hooks/
 ```
 
 **Move:**
+
 - `src/db/index.ts` → `src/shared/db/client.ts` (update import path inside file: `./schema.ts` → will be replaced in T03)
 - `src/lib/auth.ts` → `src/features/auth/server/auth.ts`
 - `src/lib/auth-client.ts` → `src/features/auth/server/auth-client.ts`
@@ -171,15 +184,18 @@ src/shared/hooks/
 ---
 
 ### T03 · Update Drizzle config for multi-file schema glob
+
 **Status:** `[ ]` | **Depends:** T02
 
 **Modify `drizzle.config.ts`:**
+
 ```ts
 schema: './src/features/**/db/schema.ts',
 out: './drizzle',
 ```
 
 **Modify `src/shared/db/client.ts`:**
+
 ```ts
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
@@ -187,6 +203,7 @@ import { Pool } from 'pg'
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 export const db = drizzle(pool)
 ```
+
 Remove the schema import — Drizzle client doesn't need the schema object for query builder usage.
 
 **Delete** `src/db/schema.ts` (now empty) and `src/db/` directory.
@@ -198,9 +215,11 @@ Remove the schema import — Drizzle client doesn't need the schema object for q
 ---
 
 ### T04 · Add missing core packages
+
 **Status:** `[ ]` | **Depends:** T01
 
 **Run:**
+
 ```bash
 pnpm add @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
 ```
@@ -216,9 +235,11 @@ pnpm add @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
 ---
 
 ### T05 · Docker Compose + local DB setup
+
 **Status:** `[ ]` | **Depends:** —
 
 **Create `docker-compose.yml`** at repo root:
+
 ```yaml
 services:
   db:
@@ -244,9 +265,11 @@ Note: omit the `app` service for now — developers run `pnpm dev` directly.
 ## Phase 1 — Database Foundation
 
 ### T06 · Shared DB client + pgvector migration
+
 **Status:** `[ ]` | **Depends:** T03, T05
 
 **Modify `src/shared/db/client.ts`** — finalize with Pool and connection validation:
+
 ```ts
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
@@ -257,6 +280,7 @@ export const db = drizzle(pool)
 ```
 
 **Create `src/shared/db/migrate.ts`:**
+
 ```ts
 import { migrate } from 'drizzle-orm/node-postgres/migrator'
 import { db } from './client'
@@ -271,6 +295,7 @@ export async function runMigrations() {
 **Wire `runMigrations()`** to run on server startup. In TanStack Start, add to the server entry or a startup hook. Call it before the app handles any requests.
 
 **Add to `package.json` scripts:**
+
 ```json
 "db:migrate:run": "tsx src/shared/db/migrate.ts"
 ```
@@ -282,11 +307,13 @@ export async function runMigrations() {
 ## Phase 2 — Auth
 
 ### T07 · Wire Better Auth to Drizzle adapter
+
 **Status:** `[ ]` | **Depends:** T06
 
 **Install:** `pnpm add @better-auth/drizzle-adapter` (check current Better Auth docs — adapter may be bundled)
 
 **Modify `src/features/auth/server/auth.ts`:**
+
 ```ts
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
@@ -307,9 +334,11 @@ export const auth = betterAuth({
 ---
 
 ### T08 · Auth guard — `_authenticated` layout route
+
 **Status:** `[ ]` | **Depends:** T07
 
 **Create `src/routes/_authenticated.tsx`:**
+
 - On `beforeLoad`: call `auth.api.getSession` (server-side). If no session, `throw redirect({ to: '/login' })`.
 - Export session via `loaderData` or context for child routes to consume.
 - Render `<Outlet />` — no UI in this file.
@@ -319,20 +348,24 @@ export const auth = betterAuth({
 ---
 
 ### T09 · Login page + signOut action
+
 **Status:** `[ ]` | **Depends:** T08
 
 **Create `src/features/auth/components/LoginForm.tsx`:**
+
 - TanStack Form + Zod schema: `{ email: z.string().email(), password: z.string().min(8) }`
 - On submit: call `authClient.signIn.email({ email, password })` from `auth-client.ts`
 - On success: `router.navigate({ to: '/campaigns' })`
 - Show field-level errors inline
 
 **Create `src/routes/login.tsx`:**
+
 - Public route (not under `_authenticated`)
 - Renders `<LoginForm />`
 - If already authenticated, redirect to `/campaigns`
 
 **Create server function `signOut`** in `src/features/auth/server/`:
+
 - Calls `auth.api.signOut`
 
 **Done when:** Can log in with email+password. Session cookie set. `/login` redirects to `/campaigns` when already authenticated.
@@ -342,11 +375,13 @@ export const auth = betterAuth({
 ## Phase 3 — App Shell
 
 ### T10 · Root layout + navigation
+
 **Status:** `[ ]` | **Depends:** T09
 
 **Create `src/shared/components/Layout.tsx`:** Wraps children with a top-level shell (header + main content area).
 
 **Create `src/shared/components/Nav.tsx`:**
+
 - Logo / app name
 - "Campaigns" nav link
 - Sign out button (calls `signOut` server function)
@@ -363,19 +398,23 @@ export const auth = betterAuth({
 ## Phase 4 — Campaigns & Systems
 
 ### T11 · Schema: `systems` + `campaigns`
+
 **Status:** `[ ]` | **Depends:** T06
 
 **Create `src/features/campaigns/db/schema.ts`:**
+
 ```ts
 export const systems = pgTable('systems', {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
-  slug: text().notNull().unique(),  // e.g. 'dnd5e', 'coc7e'
+  slug: text().notNull().unique(), // e.g. 'dnd5e', 'coc7e'
 })
 
 export const campaigns = pgTable('campaigns', {
   id: uuid().primaryKey().defaultRandom(),
-  systemId: uuid('system_id').notNull().references(() => systems.id),
+  systemId: uuid('system_id')
+    .notNull()
+    .references(() => systems.id),
   title: text().notNull(),
   description: text(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -390,9 +429,11 @@ export const campaigns = pgTable('campaigns', {
 ---
 
 ### T12 · Seed default TTRPG systems
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/shared/db/seed.ts`:**
+
 - Insert the following systems if `systems` table is empty:
   - `{ name: "D&D 5e", slug: "dnd5e" }`
   - `{ name: "Call of Cthulhu 7e", slug: "coc7e" }`
@@ -409,9 +450,11 @@ export const campaigns = pgTable('campaigns', {
 ---
 
 ### T13 · Campaign server functions + Zod schemas
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/features/campaigns/schemas.ts`:**
+
 ```ts
 export const CampaignCreateSchema = z.object({
   title: z.string().min(1).max(100),
@@ -422,6 +465,7 @@ export const CampaignUpdateSchema = CampaignCreateSchema.partial()
 ```
 
 **Create `src/features/campaigns/server/index.ts`** with server functions:
+
 - `listCampaigns()` → `Campaign[]`
 - `getCampaign(id: string)` → `Campaign | null`
 - `createCampaign(input: CampaignCreate)` → `Campaign` ← will be patched in T45 to also seed world event types
@@ -435,16 +479,19 @@ All functions: validate input with Zod, query via `db` from `src/shared/db/clien
 ---
 
 ### T14 · Campaign list page + CampaignCard + CampaignForm
+
 **Status:** `[ ]` | **Depends:** T10, T13
 
 **Create `src/features/campaigns/components/CampaignCard.tsx`:** Title, system name badge, created date. Links to `/$campaignId`.
 
 **Create `src/features/campaigns/components/CampaignForm.tsx`:**
+
 - TanStack Form + `CampaignCreateSchema`
 - Fields: title (text), systemId (select — fetched from `listSystems()`), description (textarea)
 - Renders in a Dialog/Sheet
 
 **Create `src/routes/_authenticated/campaigns/index.tsx`:**
+
 - Loads campaigns via TanStack Query `['campaigns']`
 - Renders grid of `CampaignCard`
 - "New Campaign" button → opens `CampaignForm`
@@ -455,9 +502,11 @@ All functions: validate input with Zod, query via `db` from `src/shared/db/clien
 ---
 
 ### T15 · Campaign detail layout route
+
 **Status:** `[ ]` | **Depends:** T14
 
 **Create `src/routes/_authenticated/campaigns/$campaignId.tsx`:**
+
 - `loader`: call `getCampaign(params.campaignId)`, throw 404 if null
 - Provides campaign to children via `loaderData`
 - Sub-navigation tabs: Sessions · NPCs · Factions · Characters · Graph · World Events · Documents
@@ -470,17 +519,23 @@ All functions: validate input with Zod, query via `db` from `src/shared/db/clien
 ## Phase 5 — Sessions
 
 ### T16 · Schema: `sessions` + junction tables
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/features/sessions/db/schema.ts`:**
+
 ```ts
 export const sessions = pgTable('sessions', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
-  mastraThreadId: text('mastra_thread_id'),  // soft ref — no FK constraint
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
+  mastraThreadId: text('mastra_thread_id'), // soft ref — no FK constraint
   title: text().notNull(),
   sessionNumber: integer('session_number').notNull(),
-  status: text('status', { enum: ['planned', 'completed'] }).default('planned').notNull(),
+  status: text('status', { enum: ['planned', 'completed'] })
+    .default('planned')
+    .notNull(),
   sessionDate: date('session_date'),
   planningNotes: text('planning_notes'),
   outcomeNotes: text('outcome_notes'),
@@ -488,21 +543,39 @@ export const sessions = pgTable('sessions', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const sessionNpcs = pgTable('session_npcs', {
-  sessionId: uuid('session_id').notNull().references(() => sessions.id, { onDelete: 'cascade' }),
-  npcId: uuid('npc_id').notNull(),
-  role: text('role'),
-}, (t) => [primaryKey({ columns: [t.sessionId, t.npcId] })])
+export const sessionNpcs = pgTable(
+  'session_npcs',
+  {
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => sessions.id, { onDelete: 'cascade' }),
+    npcId: uuid('npc_id').notNull(),
+    role: text('role'),
+  },
+  (t) => [primaryKey({ columns: [t.sessionId, t.npcId] })],
+)
 
-export const sessionFactions = pgTable('session_factions', {
-  sessionId: uuid('session_id').notNull().references(() => sessions.id, { onDelete: 'cascade' }),
-  factionId: uuid('faction_id').notNull(),
-}, (t) => [primaryKey({ columns: [t.sessionId, t.factionId] })])
+export const sessionFactions = pgTable(
+  'session_factions',
+  {
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => sessions.id, { onDelete: 'cascade' }),
+    factionId: uuid('faction_id').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.sessionId, t.factionId] })],
+)
 
-export const sessionPlayableCharacters = pgTable('session_playable_characters', {
-  sessionId: uuid('session_id').notNull().references(() => sessions.id, { onDelete: 'cascade' }),
-  playableCharacterId: uuid('playable_character_id').notNull(),
-}, (t) => [primaryKey({ columns: [t.sessionId, t.playableCharacterId] })])
+export const sessionPlayableCharacters = pgTable(
+  'session_playable_characters',
+  {
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => sessions.id, { onDelete: 'cascade' }),
+    playableCharacterId: uuid('playable_character_id').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.sessionId, t.playableCharacterId] })],
+)
 ```
 
 **Run:** `pnpm db:generate && pnpm db:migrate:run`
@@ -512,21 +585,26 @@ export const sessionPlayableCharacters = pgTable('session_playable_characters', 
 ---
 
 ### T17 · Session server functions + Zod schemas
+
 **Status:** `[ ]` | **Depends:** T16
 
 **Create `src/features/sessions/schemas.ts`:**
+
 ```ts
 export const SessionCreateSchema = z.object({
   campaignId: z.string().uuid(),
   title: z.string().min(1).max(100),
   sessionNumber: z.number().int().positive(),
-  sessionDate: z.string().optional(),  // ISO date string
+  sessionDate: z.string().optional(), // ISO date string
   status: z.enum(['planned', 'completed']).default('planned'),
 })
-export const SessionUpdateSchema = SessionCreateSchema.omit({ campaignId: true }).partial()
+export const SessionUpdateSchema = SessionCreateSchema.omit({
+  campaignId: true,
+}).partial()
 ```
 
 **Create `src/features/sessions/server/index.ts`:**
+
 - `listSessions(campaignId)` → sessions ordered by `session_number` desc
 - `getSession(id)` → session with `{ npcs, factions, pcs }` joined
 - `createSession(input)` → `Session`
@@ -538,11 +616,13 @@ export const SessionUpdateSchema = SessionCreateSchema.omit({ campaignId: true }
 ---
 
 ### T18 · TipTap rich text editor component
+
 **Status:** `[ ]` | **Depends:** T01 (parallel with any Phase 4-5 task)
 
 **Install:** `pnpm add @tiptap/react @tiptap/starter-kit @tiptap/extension-placeholder`
 
 **Create `src/shared/components/RichTextEditor.tsx`:**
+
 - Props: `value: string`, `onChange: (html: string) => void`, `placeholder?: string`, `disabled?: boolean`
 - Uses `useEditor` with `StarterKit` + `Placeholder` extensions
 - Basic toolbar: Bold, Italic, BulletList, OrderedList, Heading (H2, H3)
@@ -556,16 +636,19 @@ export const SessionUpdateSchema = SessionCreateSchema.omit({ campaignId: true }
 ---
 
 ### T19 · Session list + SessionCard
+
 **Status:** `[ ]` | **Depends:** T15, T17
 
 **Create `src/features/sessions/components/SessionCard.tsx`:** Session number, title, date, status badge (planned = muted, completed = green).
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/sessions/index.tsx`:**
+
 - TanStack Query `['sessions', campaignId]`
 - List of `SessionCard` sorted by session_number desc
 - "New Session" button → `SessionForm` in dialog
 
 **Create `src/features/sessions/components/SessionForm.tsx`:**
+
 - TanStack Form + `SessionCreateSchema`
 - Fields: title, session_number, session_date (date picker), status
 
@@ -574,9 +657,11 @@ export const SessionUpdateSchema = SessionCreateSchema.omit({ campaignId: true }
 ---
 
 ### T20 · Session detail route with planning notes
+
 **Status:** `[ ]` | **Depends:** T18, T19
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/sessions/$sessionId.tsx`:**
+
 - `loader`: `getSession(params.sessionId)`
 - Renders: session title, metadata (date, number, status)
 - `RichTextEditor` for `planningNotes` — auto-saves on blur via `updateSession`
@@ -590,13 +675,17 @@ export const SessionUpdateSchema = SessionCreateSchema.omit({ campaignId: true }
 ## Phase 6 — NPCs
 
 ### T21 · Schema: `npcs` + `npc_templates` + `npc_attribute_values`
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/features/npcs/db/schema.ts`:**
+
 ```ts
 export const npcs = pgTable('npcs', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   name: text().notNull(),
   portraitUrl: text('portrait_url'),
   tokenUrl: text('token_url'),
@@ -607,15 +696,24 @@ export const npcs = pgTable('npcs', {
 // One template per campaign. fields is [{key, label, type: 'text'|'number'|'select', required: bool}]
 export const npcTemplates = pgTable('npc_templates', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().unique().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .unique()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   fields: jsonb('fields').notNull().default([]),
 })
 
-export const npcAttributeValues = pgTable('npc_attribute_values', {
-  npcId: uuid('npc_id').notNull().references(() => npcs.id, { onDelete: 'cascade' }),
-  key: text().notNull(),
-  value: text().notNull().default(''),
-}, (t) => [primaryKey({ columns: [t.npcId, t.key] })])
+export const npcAttributeValues = pgTable(
+  'npc_attribute_values',
+  {
+    npcId: uuid('npc_id')
+      .notNull()
+      .references(() => npcs.id, { onDelete: 'cascade' }),
+    key: text().notNull(),
+    value: text().notNull().default(''),
+  },
+  (t) => [primaryKey({ columns: [t.npcId, t.key] })],
+)
 ```
 
 **Run:** `pnpm db:generate && pnpm db:migrate:run`
@@ -625,23 +723,29 @@ export const npcAttributeValues = pgTable('npc_attribute_values', {
 ---
 
 ### T22 · NPC template server functions
+
 **Status:** `[ ]` | **Depends:** T21
 
 **Create `src/features/npcs/server/templates.ts`:**
+
 - `getOrCreateTemplate(campaignId)` → `NpcTemplate` (creates empty template if none exists)
 - `updateTemplateFields(campaignId, fields: TemplateField[])` → `NpcTemplate`
 
 **Create `src/features/npcs/schemas.ts`:**
+
 ```ts
 export const TemplateFieldSchema = z.object({
-  key: z.string().min(1).regex(/^[a-z_]+$/),
+  key: z
+    .string()
+    .min(1)
+    .regex(/^[a-z_]+$/),
   label: z.string().min(1),
   type: z.enum(['text', 'number', 'select']),
   required: z.boolean().default(false),
-  options: z.array(z.string()).optional(),  // for 'select' type
+  options: z.array(z.string()).optional(), // for 'select' type
 })
 export const NpcTemplateUpdateSchema = z.object({
-  fields: z.array(TemplateFieldSchema)
+  fields: z.array(TemplateFieldSchema),
 })
 ```
 
@@ -650,9 +754,11 @@ export const NpcTemplateUpdateSchema = z.object({
 ---
 
 ### T23 · NPC attribute value server functions
+
 **Status:** `[ ]` | **Depends:** T22
 
 **Add to `src/features/npcs/server/`:**
+
 - `getAttributeValues(npcId)` → `Record<string, string>`
 - `upsertManyAttributeValues(npcId, values: Record<string, string>)` → uses `INSERT ... ON CONFLICT DO UPDATE`
 
@@ -661,9 +767,11 @@ export const NpcTemplateUpdateSchema = z.object({
 ---
 
 ### T24 · NPC CRUD server functions
+
 **Status:** `[ ]` | **Depends:** T21, T23
 
 **Add to `src/features/npcs/server/index.ts`:**
+
 - `listNpcs(campaignId)` → `Npc[]` (without attribute values — list view only)
 - `getNpc(id)` → `Npc & { attributes: Record<string, string> }`
 - `createNpc(input)` → `Npc` — validates required fields against template
@@ -671,6 +779,7 @@ export const NpcTemplateUpdateSchema = z.object({
 - `deleteNpc(id)` → `void`
 
 **Create `src/features/npcs/schemas.ts` additions:**
+
 ```ts
 export const NpcCreateSchema = z.object({
   campaignId: z.string().uuid(),
@@ -686,9 +795,11 @@ export const NpcCreateSchema = z.object({
 ---
 
 ### T25 · NPC template editor UI
+
 **Status:** `[ ]` | **Depends:** T22, T15
 
 **Create `src/features/npcs/components/NpcTemplateEditor.tsx`:**
+
 - Renders list of template fields (drag-to-reorder optional, can be added later)
 - Each field: key (readonly after creation), label (editable), type dropdown, required toggle, delete button
 - "Add field" button appends a new empty field row
@@ -700,9 +811,11 @@ export const NpcCreateSchema = z.object({
 ---
 
 ### T26 · NpcForm with dynamic attribute rendering
+
 **Status:** `[ ]` | **Depends:** T24, T25
 
 **Create `src/features/npcs/components/NpcForm.tsx`:**
+
 - Fetches campaign template on mount via TanStack Query
 - Renders static fields: name
 - Renders dynamic fields from template: text → `<input type="text">`, number → `<input type="number">`, select → `<select>`
@@ -716,16 +829,19 @@ export const NpcCreateSchema = z.object({
 ---
 
 ### T27 · NPC list + NPC detail route
+
 **Status:** `[ ]` | **Depends:** T24, T26
 
 **Create `src/features/npcs/components/NpcCard.tsx`:** Portrait thumbnail (if set), name, 2-3 key attribute preview.
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/npcs/index.tsx`:**
+
 - TanStack Query `['npcs', campaignId]`
 - Grid of `NpcCard`
 - "New NPC" button → `NpcForm` in dialog/sheet
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/npcs/$npcId.tsx`:**
+
 - `loader`: `getNpc(params.npcId)`
 - Renders `NpcForm` in edit mode
 - Delete button with confirmation
@@ -737,13 +853,17 @@ export const NpcCreateSchema = z.object({
 ## Phase 7 — Factions
 
 ### T28 · Schema + CRUD: `factions`
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/features/factions/db/schema.ts`:**
+
 ```ts
 export const factions = pgTable('factions', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   name: text().notNull(),
   description: text(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -762,6 +882,7 @@ export const factions = pgTable('factions', {
 ---
 
 ### T29 · Faction list + FactionCard + FactionForm
+
 **Status:** `[ ]` | **Depends:** T15, T28
 
 **Create components:** `FactionCard` (name, description excerpt), `FactionForm` (name + description textarea).
@@ -775,13 +896,17 @@ export const factions = pgTable('factions', {
 ## Phase 8 — Playable Characters
 
 ### T30 · Schema + CRUD: `playable_characters` + templates
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/features/characters/db/schema.ts`** — mirrors NPC schema pattern:
+
 ```ts
 export const playableCharacters = pgTable('playable_characters', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   name: text().notNull(),
   portraitUrl: text('portrait_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -789,14 +914,23 @@ export const playableCharacters = pgTable('playable_characters', {
 })
 export const pcTemplates = pgTable('pc_templates', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().unique().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .unique()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   fields: jsonb('fields').notNull().default([]),
 })
-export const pcAttributeValues = pgTable('pc_attribute_values', {
-  playableCharacterId: uuid('playable_character_id').notNull().references(() => playableCharacters.id, { onDelete: 'cascade' }),
-  key: text().notNull(),
-  value: text().notNull().default(''),
-}, (t) => [primaryKey({ columns: [t.playableCharacterId, t.key] })])
+export const pcAttributeValues = pgTable(
+  'pc_attribute_values',
+  {
+    playableCharacterId: uuid('playable_character_id')
+      .notNull()
+      .references(() => playableCharacters.id, { onDelete: 'cascade' }),
+    key: text().notNull(),
+    value: text().notNull().default(''),
+  },
+  (t) => [primaryKey({ columns: [t.playableCharacterId, t.key] })],
+)
 ```
 
 **Run:** `pnpm db:generate && pnpm db:migrate:run`
@@ -808,6 +942,7 @@ export const pcAttributeValues = pgTable('pc_attribute_values', {
 ---
 
 ### T31 · PC template editor + PcForm + PC list
+
 **Status:** `[ ]` | **Depends:** T25, T26, T30
 
 Replicate the NPC template editor and form patterns for PCs. The component structure is structurally identical — reuse `NpcTemplateEditor` logic, not the component itself.
@@ -821,9 +956,11 @@ Replicate the NPC template editor and form patterns for PCs. The component struc
 ## Phase 9 — Session-Entity Associations
 
 ### T32 · Session-entity association server functions
+
 **Status:** `[ ]` | **Depends:** T16, T21, T28, T30
 
 **Create `src/features/sessions/server/associations.ts`:**
+
 - `addNpcToSession(sessionId, npcId, role?: string)` → upsert into `session_npcs`
 - `removeNpcFromSession(sessionId, npcId)` → delete from `session_npcs`
 - `addFactionToSession(sessionId, factionId)` → upsert into `session_factions`
@@ -837,14 +974,17 @@ Replicate the NPC template editor and form patterns for PCs. The component struc
 ---
 
 ### T33 · Entity picker UI on session detail
+
 **Status:** `[ ]` | **Depends:** T20, T32
 
 **Create `src/shared/components/EntityPicker.tsx`:**
+
 - Combobox with search filtering
 - Props: `entities: {id, name}[]`, `selected: string[]`, `onAdd: (id) => void`, `onRemove: (id) => void`
 - Renders selected items as dismissible chips
 
 **Wire into session detail page (T20):**
+
 - Three `EntityPicker` instances: NPCs (with role text input), Factions, PCs
 - Mutations call association server functions, invalidate `['session', sessionId]` query
 
@@ -855,19 +995,29 @@ Replicate the NPC template editor and form patterns for PCs. The component struc
 ## Phase 10 — Relationships + Graph
 
 ### T34 · Schema: `relationships`
+
 **Status:** `[ ]` | **Depends:** T11
 
 **Create `src/features/relationships/db/schema.ts`:**
+
 ```ts
 export const relationships = pgTable('relationships', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
-  sourceEntityType: text('source_entity_type', { enum: ['npc', 'faction', 'pc'] }).notNull(),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
+  sourceEntityType: text('source_entity_type', {
+    enum: ['npc', 'faction', 'pc'],
+  }).notNull(),
   sourceEntityId: uuid('source_entity_id').notNull(),
-  targetEntityType: text('target_entity_type', { enum: ['npc', 'faction', 'pc'] }).notNull(),
+  targetEntityType: text('target_entity_type', {
+    enum: ['npc', 'faction', 'pc'],
+  }).notNull(),
   targetEntityId: uuid('target_entity_id').notNull(),
-  type: text('type').notNull(),  // 'member_of', 'allied_with', 'rivals', etc.
-  sentiment: text('sentiment', { enum: ['positive', 'neutral', 'negative'] }).notNull().default('neutral'),
+  type: text('type').notNull(), // 'member_of', 'allied_with', 'rivals', etc.
+  sentiment: text('sentiment', { enum: ['positive', 'neutral', 'negative'] })
+    .notNull()
+    .default('neutral'),
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -881,9 +1031,11 @@ export const relationships = pgTable('relationships', {
 ---
 
 ### T35 · Relationship server functions + graph data query
+
 **Status:** `[ ]` | **Depends:** T21, T28, T30, T34
 
 **Create `src/features/relationships/server/index.ts`:**
+
 - `createRelationship(input)`, `updateRelationship(id, input)`, `deleteRelationship(id)`
 - `getGraphData(campaignId)` → returns exact React Flow shape:
   ```ts
@@ -901,15 +1053,18 @@ export const relationships = pgTable('relationships', {
 ---
 
 ### T36 · React Flow graph canvas route
+
 **Status:** `[ ]` | **Depends:** T35
 
 **Install:** `pnpm add @xyflow/react`
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/graph.tsx`:**
+
 - `loader`: `getGraphData(params.campaignId)`
 - Renders `<ReactFlowProvider><RelationshipGraph /></ReactFlowProvider>`
 
 **Create `src/features/relationships/components/RelationshipGraph.tsx`:**
+
 - `useNodesState` + `useEdgesState` initialized from loader data
 - `<ReactFlow nodes={nodes} edges={edges} fitView />`
 - Default node/edge types for now (custom types added in T37)
@@ -919,20 +1074,24 @@ export const relationships = pgTable('relationships', {
 ---
 
 ### T37 · Custom React Flow node types
+
 **Status:** `[ ]` | **Depends:** T36
 
 **Create `src/features/relationships/components/NpcNode.tsx`:**
+
 - Props: `data: { name: string, portraitUrl?: string }`
 - Renders: portrait thumbnail (or initials avatar if no portrait), name label
 - Styled with campaign theme colors
 
 **Create `src/features/relationships/components/FactionNode.tsx`:**
+
 - Props: `data: { name: string }`
 - Distinct visual style from NPC nodes
 
 Register in `RelationshipGraph.tsx`:
+
 ```ts
-const nodeTypes = { npc: NpcNode, faction: FactionNode, pc: NpcNode }  // pc reuses NpcNode for now
+const nodeTypes = { npc: NpcNode, faction: FactionNode, pc: NpcNode } // pc reuses NpcNode for now
 ```
 
 Edge labels: display `data.type`, color-coded by `data.sentiment` (green/gray/red).
@@ -942,15 +1101,18 @@ Edge labels: display `data.type`, color-coded by `data.sentiment` (green/gray/re
 ---
 
 ### T38 · Relationship create/edit panel
+
 **Status:** `[ ]` | **Depends:** T37
 
 **Create `src/features/relationships/components/RelationshipPanel.tsx`:**
+
 - Triggered by: clicking an edge (edit mode) or "onConnect" handler (create mode)
 - Fields: type (text), sentiment (select), notes (textarea), delete button
 - Mutations: create/update/delete via server functions
 - On save/delete: invalidate `['graph', campaignId]` query
 
 **Wire into `RelationshipGraph.tsx`:**
+
 - `onEdgeClick` → opens panel in edit mode
 - `onConnect` → opens panel in create mode with source/target pre-filled
 
@@ -961,9 +1123,11 @@ Edge labels: display `data.type`, color-coded by `data.sentiment` (green/gray/re
 ## Phase 11 — File Storage Foundation
 
 ### T39 · R2 client + upload helpers
+
 **Status:** `[ ]` | **Depends:** T04
 
 **Create `src/shared/storage/r2.ts`:**
+
 ```ts
 import { S3Client } from '@aws-sdk/client-s3'
 
@@ -978,13 +1142,24 @@ export const r2 = new S3Client({
 ```
 
 **Create `src/shared/storage/upload.ts`:**
+
 ```ts
 // Key patterns from architecture doc
-export function buildR2Key(type: 'npc-portrait'|'session-map'|'document', campaignId: string, entityId: string, filename: string): string
+export function buildR2Key(
+  type: 'npc-portrait' | 'session-map' | 'document',
+  campaignId: string,
+  entityId: string,
+  filename: string,
+): string
 
-export async function uploadToR2(key: string, body: Buffer, contentType: string): Promise<string>  // returns public URL
+export async function uploadToR2(
+  key: string,
+  body: Buffer,
+  contentType: string,
+): Promise<string> // returns public URL
 export async function deleteFromR2(key: string): Promise<void>
 ```
+
 Public URL = `${process.env.R2_PUBLIC_URL}/${key}`
 
 **Done when:** `uploadToR2` and `deleteFromR2` work against real R2 bucket.
@@ -994,18 +1169,22 @@ Public URL = `${process.env.R2_PUBLIC_URL}/${key}`
 ## Phase 12 — Attachments
 
 ### T40 · Schema + CRUD: `attachments`
+
 **Status:** `[ ]` | **Depends:** T39
 
 **Create `src/features/attachments/db/schema.ts`** (or inline in `src/shared/db/`):
+
 ```ts
 export const attachments = pgTable('attachments', {
   id: uuid().primaryKey().defaultRandom(),
   entityType: text('entity_type', { enum: ['session', 'npc', 'pc'] }).notNull(),
   entityId: uuid('entity_id').notNull(),
-  attachmentType: text('attachment_type', { enum: ['image', 'link'] }).notNull(),
+  attachmentType: text('attachment_type', {
+    enum: ['image', 'link'],
+  }).notNull(),
   url: text('url').notNull(),
   label: text('label'),
-  r2Key: text('r2_key'),  // null for link attachments
+  r2Key: text('r2_key'), // null for link attachments
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 ```
@@ -1013,6 +1192,7 @@ export const attachments = pgTable('attachments', {
 **Run:** `pnpm db:generate && pnpm db:migrate:run`
 
 **Create server functions:**
+
 - `createAttachment(input)` — for images: upload to R2 first, store key + URL
 - `listAttachments(entityType, entityId)` → `Attachment[]`
 - `deleteAttachment(id)` — deletes R2 file if `r2Key` is set
@@ -1022,17 +1202,20 @@ export const attachments = pgTable('attachments', {
 ---
 
 ### T41 · Uppy uploader component + NPC portrait upload
+
 **Status:** `[ ]` | **Depends:** T39, T40
 
 **Install:** `pnpm add uppy @uppy/core @uppy/react @uppy/dashboard @uppy/xhr-upload`
 
 **Create server function `getUploadProxy`** in `src/shared/storage/`:
+
 - Accepts multipart form data (file + entityType + entityId + campaignId)
 - Calls `uploadToR2`, creates `attachments` record
 - Returns `{ url, attachmentId }`
 - Route this as a conventional API route: `POST /api/upload`
 
 **Create `src/shared/components/FileUploader.tsx`:**
+
 - Props: `entityType`, `entityId`, `campaignId`, `onUpload: (url: string) => void`
 - Uppy with XHR upload to `/api/upload`
 - Single-file mode for portraits, multi-file for maps
@@ -1044,16 +1227,19 @@ export const attachments = pgTable('attachments', {
 ---
 
 ### T42 · Attachment gallery on session + PC detail
+
 **Status:** `[ ]` | **Depends:** T41
 
 **Add TipTap `Image` extension** to `RichTextEditor.tsx`.
 
 **Create `src/shared/components/AttachmentGallery.tsx`:**
+
 - Props: `entityType`, `entityId`, `campaignId`
 - Renders: `FileUploader` + grid of existing attachments (thumbnail or link card) with delete button
 - TanStack Query `['attachments', entityType, entityId]`
 
 **Wire into:**
+
 - Session detail: "Maps & Attachments" tab
 - PC detail: portrait + attachments section
 
@@ -1064,37 +1250,61 @@ export const attachments = pgTable('attachments', {
 ## Phase 13 — World Events
 
 ### T43 · Schema: `world_event_types` + `world_events` + `world_event_sessions`
+
 **Status:** `[ ]` | **Depends:** T11, T16
 
 **Create `src/features/world-events/db/schema.ts`:**
+
 ```ts
-export const worldEventTypes = pgTable('world_event_types', {
-  id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
-  key: text('key').notNull(),     // references worldEventSchemas in code
-  label: text('label').notNull(),
-  targetEntityType: text('target_entity_type', { enum: ['npc', 'faction', 'pc', 'world'] }).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (t) => [unique({ columns: [t.campaignId, t.key] })])
+export const worldEventTypes = pgTable(
+  'world_event_types',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    campaignId: uuid('campaign_id')
+      .notNull()
+      .references(() => campaigns.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(), // references worldEventSchemas in code
+    label: text('label').notNull(),
+    targetEntityType: text('target_entity_type', {
+      enum: ['npc', 'faction', 'pc', 'world'],
+    }).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (t) => [unique({ columns: [t.campaignId, t.key] })],
+)
 
 export const worldEvents = pgTable('world_events', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   eventTypeKey: text('event_type_key').notNull(),
-  targetEntityType: text('target_entity_type', { enum: ['npc', 'faction', 'pc', 'world'] }).notNull(),
+  targetEntityType: text('target_entity_type', {
+    enum: ['npc', 'faction', 'pc', 'world'],
+  }).notNull(),
   targetEntityId: uuid('target_entity_id'),
   payload: jsonb('payload').notNull(),
   summary: text('summary').notNull(),
-  status: text('status', { enum: ['pending', 'approved', 'rejected'] }).notNull().default('pending'),
+  status: text('status', { enum: ['pending', 'approved', 'rejected'] })
+    .notNull()
+    .default('pending'),
   proposedAt: timestamp('proposed_at').defaultNow().notNull(),
   reviewedAt: timestamp('reviewed_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-export const worldEventSessions = pgTable('world_event_sessions', {
-  worldEventId: uuid('world_event_id').notNull().references(() => worldEvents.id, { onDelete: 'cascade' }),
-  sessionId: uuid('session_id').notNull().references(() => sessions.id, { onDelete: 'cascade' }),
-}, (t) => [primaryKey({ columns: [t.worldEventId, t.sessionId] })])
+export const worldEventSessions = pgTable(
+  'world_event_sessions',
+  {
+    worldEventId: uuid('world_event_id')
+      .notNull()
+      .references(() => worldEvents.id, { onDelete: 'cascade' }),
+    sessionId: uuid('session_id')
+      .notNull()
+      .references(() => sessions.id, { onDelete: 'cascade' }),
+  },
+  (t) => [primaryKey({ columns: [t.worldEventId, t.sessionId] })],
+)
 ```
 
 **Run:** `pnpm db:generate && pnpm db:migrate:run`
@@ -1104,6 +1314,7 @@ export const worldEventSessions = pgTable('world_event_sessions', {
 ---
 
 ### T44 · World event type Zod schemas (all 24 default types)
+
 **Status:** `[ ]` | **Depends:** T01 (pure TypeScript — no DB dependency)
 
 **Create `src/features/world-events/event-schemas.ts`** with all 24 types:
@@ -1117,6 +1328,7 @@ World events (6): `location_discovered`, `location_destroyed`, `major_political_
 Session events (3): `party_decision_consequence`, `quest_completed`, `quest_failed`
 
 **Export:**
+
 ```ts
 export const worldEventSchemas = { ... } satisfies Record<string, z.ZodSchema>
 export type WorldEventSchemaKey = keyof typeof worldEventSchemas
@@ -1129,15 +1341,19 @@ Each schema must include at minimum: the primary entity ID (e.g. `npc_id: z.stri
 ---
 
 ### T45 · Seed default world_event_types on campaign creation
+
 **Status:** `[ ]` | **Depends:** T13, T43, T44
 
 **Create `src/features/world-events/server/seed.ts`:**
+
 ```ts
 export async function seedDefaultEventTypes(campaignId: string): Promise<void>
 ```
+
 Inserts one row per key from `worldEventSchemas`. Uses `INSERT ... ON CONFLICT DO NOTHING`.
 
 **Patch `createCampaign`** in `src/features/campaigns/server/index.ts`:
+
 - After campaign insert, call `seedDefaultEventTypes(campaign.id)` within the same transaction
 
 **Done when:** Creating a campaign via `createCampaign` results in 24 `world_event_types` rows for that campaign.
@@ -1145,9 +1361,11 @@ Inserts one row per key from `worldEventSchemas`. Uses `INSERT ... ON CONFLICT D
 ---
 
 ### T46 · World event approval server functions
+
 **Status:** `[ ]` | **Depends:** T43
 
 **Create `src/features/world-events/server/index.ts`:**
+
 - `listPendingWorldEvents(campaignId)` — **MUST filter `status = 'pending'` only**
 - `approveWorldEvent(eventId)` — sets `status = 'approved'`, `reviewedAt = now()`
 - `rejectWorldEvent(eventId)` — sets `status = 'rejected'`, `reviewedAt = now()`
@@ -1161,16 +1379,19 @@ Inserts one row per key from `worldEventSchemas`. Uses `INSERT ... ON CONFLICT D
 ---
 
 ### T47 · World event approval UI
+
 **Status:** `[ ]` | **Depends:** T46, T15
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/world-events.tsx`:**
 
 **`PendingProposals` section:**
+
 - TanStack Query `['world-events', 'pending', campaignId]`
 - List of `ApprovalCard`: event type label, target entity name, AI-generated summary, payload formatted as readable key-value pairs, Approve + Reject buttons
 - Approve/Reject mutations invalidate `['world-events', 'pending', campaignId]`
 
 **`WorldStateView` section:**
+
 - TanStack Query `['world-events', 'approved', campaignId]`
 - Approved events grouped by target entity, chronological order
 - Read-only view
@@ -1182,33 +1403,50 @@ Inserts one row per key from `worldEventSchemas`. Uses `INSERT ... ON CONFLICT D
 ## Phase 14 — Lore Documents
 
 ### T48 · Schema + CRUD: `lore_documents` + `lore_document_entities`
+
 **Status:** `[ ]` | **Depends:** T11, T39
 
 **Create `src/features/documents/db/schema.ts`:**
+
 ```ts
 export const loreDocuments = pgTable('lore_documents', {
   id: uuid().primaryKey().defaultRandom(),
-  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  campaignId: uuid('campaign_id')
+    .notNull()
+    .references(() => campaigns.id, { onDelete: 'cascade' }),
   filename: text('filename').notNull(),
   r2Key: text('r2_key').notNull(),
   r2Url: text('r2_url').notNull(),
   documentType: text('document_type', { enum: ['lore', 'rules'] }).notNull(),
-  status: text('status', { enum: ['uploading', 'processing', 'ready', 'failed'] }).notNull().default('uploading'),
+  status: text('status', {
+    enum: ['uploading', 'processing', 'ready', 'failed'],
+  })
+    .notNull()
+    .default('uploading'),
   retryCount: integer('retry_count').notNull().default(0),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const loreDocumentEntities = pgTable('lore_document_entities', {
-  documentId: uuid('document_id').notNull().references(() => loreDocuments.id, { onDelete: 'cascade' }),
-  entityType: text('entity_type', { enum: ['npc', 'faction', 'pc'] }).notNull(),
-  entityId: uuid('entity_id').notNull(),
-}, (t) => [primaryKey({ columns: [t.documentId, t.entityType, t.entityId] })])
+export const loreDocumentEntities = pgTable(
+  'lore_document_entities',
+  {
+    documentId: uuid('document_id')
+      .notNull()
+      .references(() => loreDocuments.id, { onDelete: 'cascade' }),
+    entityType: text('entity_type', {
+      enum: ['npc', 'faction', 'pc'],
+    }).notNull(),
+    entityId: uuid('entity_id').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.documentId, t.entityType, t.entityId] })],
+)
 ```
 
 **Run:** `pnpm db:generate && pnpm db:migrate:run`
 
 **Create server functions:**
+
 - `createLoreDocument(input)` → creates DB record (`status: 'uploading'`), triggers workflow stub (logs warning — real trigger wired in T52)
 - `listLoreDocuments(campaignId)` → `LoreDocument[]`
 - `getLoreDocument(id)` → `LoreDocument`
@@ -1221,6 +1459,7 @@ export const loreDocumentEntities = pgTable('lore_document_entities', {
 ---
 
 ### T49 · Lore document upload UI + entity tagging
+
 **Status:** `[ ]` | **Depends:** T41, T48
 
 **Create `src/routes/_authenticated/campaigns/$campaignId/documents.tsx`:**
@@ -1238,11 +1477,13 @@ export const loreDocumentEntities = pgTable('lore_document_entities', {
 ## Phase 15 — Mastra Foundation + Document Processing
 
 ### T50 · Install Mastra + initialize core
+
 **Status:** `[ ]` | **Depends:** T06
 
 **Install:** `pnpm add @mastra/core @mastra/pg`
 
 **Create `src/features/ai/index.ts`:**
+
 ```ts
 import { Mastra } from '@mastra/core'
 import { PostgresStore, PgVector } from '@mastra/pg'
@@ -1252,8 +1493,8 @@ export const mastra = new Mastra({
   vectors: {
     campaigns: new PgVector({ connectionString: process.env.DATABASE_URL! }),
   },
-  agents: {},      // populated in T55, T59
-  workflows: {},   // populated in T51, T59
+  agents: {}, // populated in T55, T59
+  workflows: {}, // populated in T51, T59
 })
 ```
 
@@ -1266,6 +1507,7 @@ export const mastra = new Mastra({
 ---
 
 ### T51 · Document processing Mastra workflow
+
 **Status:** `[ ]` | **Depends:** T48, T50
 
 **Install:** `pnpm add unpdf` (PDF text extraction, zero-dependency)
@@ -1273,6 +1515,7 @@ export const mastra = new Mastra({
 **Create `src/features/ai/workflows/document-processing.ts`:**
 
 Steps:
+
 1. `fetchDocument` — query DB for `lore_documents` record, fetch file buffer from R2
 2. `extractText` — use `unpdf` for PDFs, direct string for `.txt`
 3. `chunkText` — split into ~500-token chunks with 50-token overlap (implement with character count approximation: ~4 chars/token)
@@ -1291,19 +1534,23 @@ Steps:
 ---
 
 ### T52 · Wire document upload trigger + SSE notifications endpoint
+
 **Status:** `[ ]` | **Depends:** T49, T51
 
 **Create API route `src/routes/api/ai/notifications.ts`:**
+
 - `GET /api/ai/notifications` — SSE stream
 - Keeps connection alive with 30s heartbeat comments
 - Emits events: `document_ready`, `document_failed`, `analysis_complete`, `analysis_failed`
 - In-process event emitter (no Redis needed at single-user scale). Export `notificationEmitter` singleton for use in workflows.
 
 **Patch `createLoreDocument`** in `src/features/documents/server/index.ts`:
+
 - After creating DB record, call `mastra.getWorkflow('documentProcessing').createRun().start({ documentId })`
 - Catch workflow trigger errors — do not let them fail the document creation response
 
 **Emit from workflow steps:**
+
 - `markReady` step: emit `document_ready` with `{ documentId }`
 - Failure handler: emit `document_failed` with `{ documentId }`
 
@@ -1312,26 +1559,34 @@ Steps:
 ---
 
 ### T53 · SSE client hook + document status real-time update
+
 **Status:** `[ ]` | **Depends:** T52
 
 **Create `src/shared/hooks/useNotifications.ts`:**
+
 ```ts
 export function useNotifications(handlers: {
   onDocumentReady?: (data: { documentId: string }) => void
   onDocumentFailed?: (data: { documentId: string }) => void
-  onAnalysisComplete?: (data: { sessionId: string, proposedCount: number }) => void
+  onAnalysisComplete?: (data: {
+    sessionId: string
+    proposedCount: number
+  }) => void
   onAnalysisFailed?: (data: { sessionId: string }) => void
 }): void
 ```
+
 - Connects to `/api/ai/notifications` via `EventSource`
 - Auto-reconnects on connection loss (exponential backoff, max 30s)
 - Cleans up `EventSource` on unmount
 
 **Create API route `src/routes/api/jobs/$jobId/status.ts`:**
+
 - `GET /api/jobs/:jobId/status` — polling fallback
 - Returns `{ status: 'running'|'complete'|'failed', result?: object }`
 
 **Wire in document list page (T49):**
+
 - `useNotifications({ onDocumentReady, onDocumentFailed })` handlers invalidate `['documents', campaignId]` TanStack Query
 
 **Done when:** Upload a document → status updates from `uploading` → `processing` → `ready` in the UI without a page refresh.
@@ -1341,20 +1596,24 @@ export function useNotifications(handlers: {
 ## Phase 16 — Planning Agent (Mode 1)
 
 ### T54 · Mastra tools: `get_session_data`, `get_world_state`, `search_lore`
+
 **Status:** `[ ]` | **Depends:** T32, T46, T51
 
 **Create `src/features/ai/tools/get-session-data.ts`:**
+
 - Input: `{ sessionId: string }`
 - Fetches session + `getSessionEntities(sessionId)` (NPCs with attributes, factions, PCs)
 - Returns structured summary of the session and involved entities
 
 **Create `src/features/ai/tools/get-world-state.ts`:**
+
 - Input: `{ campaignId: string }`
 - Calls `getApprovedWorldEvents(campaignId, 30)` — **approved only, enforced by that function**
 - Returns array of `{ eventTypeKey, summary, targetEntityType, targetEntityId, proposedAt }`
 - Never returns payload — summary field only (to conserve tokens)
 
 **Create `src/features/ai/tools/search-lore.ts`:**
+
 - Input: `{ query: string, campaignId: string, entityIds?: string[] }`
 - Queries PgVector similarity search with metadata filter: `campaignId` always, `entityIds` when provided
 - Only returns chunks from documents with `status = 'ready'`
@@ -1366,9 +1625,11 @@ export function useNotifications(handlers: {
 ---
 
 ### T55 · Planning agent definition
+
 **Status:** `[ ]` | **Depends:** T54
 
 **Create `src/features/ai/agents/planning-agent.ts`:**
+
 ```ts
 export const planningAgent = new Agent({
   name: 'planning-assistant',
@@ -1378,7 +1639,7 @@ export const planningAgent = new Agent({
   ALWAYS use tools to retrieve context before answering.
   NEVER propose changes to world state — that is handled by a separate process.
   Be specific, creative, and grounded in the campaign's established facts.`,
-  model: anthropic('claude-haiku-4-5'),  // use claude-sonnet-4-6 for complex reasoning if needed
+  model: anthropic('claude-haiku-4-5'), // use claude-sonnet-4-6 for complex reasoning if needed
   tools: { getSessionData, getWorldState, searchLore },
   // Thread memory managed by Mastra via PostgresStore
 })
@@ -1391,20 +1652,26 @@ export const planningAgent = new Agent({
 ---
 
 ### T56 · `POST /api/ai/chat` endpoint + rate limiter
+
 **Status:** `[ ]` | **Depends:** T55
 
 **Create `src/shared/lib/rate-limiter.ts`:**
+
 ```ts
 // In-memory token bucket — resets on server restart (acceptable for single-user)
 export class RateLimiter {
-  constructor(private maxTokens: number, private windowMs: number) {}
-  check(key: string): boolean  // returns false if rate limited
+  constructor(
+    private maxTokens: number,
+    private windowMs: number,
+  ) {}
+  check(key: string): boolean // returns false if rate limited
   consume(key: string): void
 }
-export const chatRateLimiter = new RateLimiter(30, 60 * 60 * 1000)  // 30/session/hour
+export const chatRateLimiter = new RateLimiter(30, 60 * 60 * 1000) // 30/session/hour
 ```
 
 **Create `src/routes/api/ai/chat.ts`:**
+
 - `POST /api/ai/chat`
 - Body: `{ sessionId: string, message: string, threadId?: string }`
 - Rate limit check: `chatRateLimiter.check(sessionId)` → 429 if exceeded
@@ -1418,9 +1685,11 @@ export const chatRateLimiter = new RateLimiter(30, 60 * 60 * 1000)  // 30/sessio
 ---
 
 ### T57 · PlanningChat UI + session detail integration
+
 **Status:** `[ ]` | **Depends:** T20, T56
 
 **Create `src/features/ai/components/PlanningChat.tsx`:**
+
 - State: `messages: {role: 'user'|'assistant', content: string}[]`, `threadId: string | null`
 - Message list: user messages right-aligned, assistant messages left-aligned
 - Streaming display: append token-by-token as SSE `delta` events arrive
@@ -1439,18 +1708,22 @@ export const chatRateLimiter = new RateLimiter(30, 60 * 60 * 1000)  // 30/sessio
 ## Phase 17 — Analysis Agent (Mode 2)
 
 ### T58 · Mastra tools: `get_recent_sessions`, `get_world_events`, `propose_world_event`
+
 **Status:** `[ ]` | **Depends:** T44, T46
 
 **Create `src/features/ai/tools/get-recent-sessions.ts`:**
+
 - Input: `{ campaignId: string, limit?: number }` (default 5)
 - Returns last N **completed** sessions with `outcomeNotes`, `sessionNumber`, `title`
 
 **Create `src/features/ai/tools/get-world-events.ts`:**
+
 - Input: `{ campaignId: string, limit?: number }` (default 30)
 - Calls `getApprovedWorldEvents` — **approved only**
 - Returns `{ eventTypeKey, summary, targetEntityType, targetEntityId, proposedAt }[]`
 
 **Create `src/features/ai/tools/propose-world-event.ts`:**
+
 - Input: `{ eventTypeKey: string, targetEntityType: string, targetEntityId: string | null, payload: unknown, summary: string }`
 - **Step 1:** `worldEventSchemas[eventTypeKey].safeParse(payload)` — if invalid, throw with Zod error details so the agent can retry with corrected payload
 - **Step 2 (only if valid):** Insert into `world_events` with `status = 'pending'`
@@ -1461,9 +1734,11 @@ export const chatRateLimiter = new RateLimiter(30, 60 * 60 * 1000)  // 30/sessio
 ---
 
 ### T59 · Analysis agent + session analysis workflow
+
 **Status:** `[ ]` | **Depends:** T58
 
 **Create `src/features/ai/agents/analysis-agent.ts`:**
+
 ```ts
 export const analysisAgent = new Agent({
   name: 'world-state-analyzer',
@@ -1472,7 +1747,7 @@ export const analysisAgent = new Agent({
   For each change: identify the event type, the affected entity, construct a valid payload, and write a one-sentence summary.
   Use propose_world_event for each change. Propose only changes clearly supported by the session outcomes.
   Do not propose speculative changes.`,
-  model: anthropic('claude-haiku-4-5'),  // Haiku only — no Sonnet for cost control
+  model: anthropic('claude-haiku-4-5'), // Haiku only — no Sonnet for cost control
   tools: { getRecentSessions, getWorldEvents, proposeWorldEvent },
   // No memory — stateless per run
 })
@@ -1481,6 +1756,7 @@ export const analysisAgent = new Agent({
 **Create `src/features/ai/workflows/session-analysis.ts`:**
 
 Steps:
+
 1. `fetchContext` — call `getRecentSessions`, `getApprovedWorldEvents`, fetch involved entities for triggering session
 2. `runAnalysis` — call `analysisAgent.generate(systemPromptWithContext)` — agent will call `propose_world_event` tool for each proposed change
 3. `emitNotification` — emit `analysis_complete` SSE with `{ sessionId, proposedCount }`
@@ -1494,9 +1770,11 @@ Retry: 2 attempts. On permanent failure: emit `analysis_failed` SSE.
 ---
 
 ### T60 · `POST /api/sessions/:id/debrief` endpoint
+
 **Status:** `[ ]` | **Depends:** T53, T59
 
 **Create `src/routes/api/sessions/$sessionId/debrief.ts`:**
+
 - `POST /api/sessions/:sessionId/debrief`
 - Body: `{ outcomeNotes: string }`
 - Rate limit: max 3 analysis runs per session (use separate `analysisRateLimiter` keyed by sessionId, max 3, no time window — lifetime cap)
@@ -1510,9 +1788,11 @@ Retry: 2 attempts. On permanent failure: emit `analysis_failed` SSE.
 ---
 
 ### T61 · Debrief form + SSE-driven proposal refresh
+
 **Status:** `[ ]` | **Depends:** T47, T53, T60
 
 **Wire into session detail (T20):**
+
 - When `session.status === 'completed'`, render debrief section (or allow re-debrief)
 - "Outcome Notes" section: `RichTextEditor` for `outcomeNotes` already present from T20 — add "Analyze Session" button
 - On click: POST to `/api/sessions/:id/debrief`, show spinner with "Analyzing campaign changes..."
@@ -1528,6 +1808,7 @@ Retry: 2 attempts. On permanent failure: emit `analysis_failed` SSE.
 ## Phase 18 — Production Hardening
 
 ### T62 · Error boundaries + 404 handling
+
 **Status:** `[ ]` | **Depends:** T10
 
 **Modify `src/routes/__root.tsx`:** Add TanStack Router `errorComponent` — renders a generic error UI with "Reload page" and "Go to campaigns" buttons.
@@ -1541,6 +1822,7 @@ Retry: 2 attempts. On permanent failure: emit `analysis_failed` SSE.
 ---
 
 ### T63 · Loading skeletons
+
 **Status:** `[ ]` | **Depends:** T14
 
 Install shadcn `Skeleton` component if not already present: `npx shadcn@latest add skeleton`
@@ -1554,9 +1836,11 @@ Install shadcn `Skeleton` component if not already present: `npx shadcn@latest a
 ---
 
 ### T64 · Environment variable validation on startup
+
 **Status:** `[ ]` | **Depends:** T04
 
 **Create `src/shared/lib/env.ts`:**
+
 ```ts
 const EnvSchema = z.object({
   DATABASE_URL: z.string().min(1),
@@ -1586,9 +1870,11 @@ export const env = result.data
 ---
 
 ### T65 · Dockerfile for production
+
 **Status:** `[ ]` | **Depends:** T05
 
 **Create `Dockerfile`** at repo root:
+
 ```dockerfile
 FROM node:22-slim AS builder
 WORKDIR /app
@@ -1617,18 +1903,18 @@ Note: `CMD` runs the built Nitro server. Migrations (`pnpm db:migrate:run`) shou
 
 ## Risk Register
 
-| ID | Risk | Severity | Mitigation |
-|---|---|---|---|
-| R1 | Drizzle schema glob silently misses feature schema files | High | After T03, create a throwaway test table in a feature schema, run `db:generate`, verify it appears in the migration diff. Remove before merge. |
-| R2 | pgvector extension not present when Mastra `PgVector` initializes | High | `runMigrations()` (T06) runs `CREATE EXTENSION IF NOT EXISTS vector` as its first statement. `PgVector` is only constructed after migrations complete. |
-| R3 | Pending world events leaking into AI context | Critical | `getApprovedWorldEvents` is named explicitly. Every AI tool uses this function, never raw queries on `world_events`. Add a comment block on the function: "AI READ PATH — approved only." |
-| R4 | `propose_world_event` tool writing invalid payloads | High | Zod validation runs before any DB write in T58. Invalid payload → tool throws → agent retries with corrected payload. Never write on schema mismatch. |
-| R5 | Mastra `mastra_thread_id` dangling reference if Mastra tables reset | Medium | `sessions.mastraThreadId` is nullable. Chat endpoint (T56) handles null by creating a new thread. Treat it as a soft pointer, not a FK. |
-| R6 | SSE long-lived connections on Fly.io/Railway | Medium | Verify Nitro server config allows persistent connections. Set `keep_alive_timeout` appropriately. Polling fallback (T53) handles reconnection. |
-| R7 | Zod v4 API differences from v3 examples | Medium | Project starts on v4. Mastra may peer-dep on v3 internally — check for `zod` version conflicts during T50 install. Resolve with `pnpm dedupe` if needed. |
-| R8 | Uppy direct-to-R2 CORS issues | Medium | Route uploads through server proxy (`POST /api/upload`) in T41. Avoids CORS configuration entirely at the cost of slightly higher latency. |
-| R9 | `content-collections` Vite plugin not removed from `vite.config.ts` | Low | T01 removes both the package and the plugin import in the same commit. Build will fail fast if import is missed. |
-| R10 | `createCampaign` not seeding world event types | Medium | T45 patches `createCampaign` within the same transaction. After T45, write a quick smoke test: create a campaign, assert 24 rows in `world_event_types` for that campaign. |
+| ID  | Risk                                                                | Severity | Mitigation                                                                                                                                                                                |
+| --- | ------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Drizzle schema glob silently misses feature schema files            | High     | After T03, create a throwaway test table in a feature schema, run `db:generate`, verify it appears in the migration diff. Remove before merge.                                            |
+| R2  | pgvector extension not present when Mastra `PgVector` initializes   | High     | `runMigrations()` (T06) runs `CREATE EXTENSION IF NOT EXISTS vector` as its first statement. `PgVector` is only constructed after migrations complete.                                    |
+| R3  | Pending world events leaking into AI context                        | Critical | `getApprovedWorldEvents` is named explicitly. Every AI tool uses this function, never raw queries on `world_events`. Add a comment block on the function: "AI READ PATH — approved only." |
+| R4  | `propose_world_event` tool writing invalid payloads                 | High     | Zod validation runs before any DB write in T58. Invalid payload → tool throws → agent retries with corrected payload. Never write on schema mismatch.                                     |
+| R5  | Mastra `mastra_thread_id` dangling reference if Mastra tables reset | Medium   | `sessions.mastraThreadId` is nullable. Chat endpoint (T56) handles null by creating a new thread. Treat it as a soft pointer, not a FK.                                                   |
+| R6  | SSE long-lived connections on Fly.io/Railway                        | Medium   | Verify Nitro server config allows persistent connections. Set `keep_alive_timeout` appropriately. Polling fallback (T53) handles reconnection.                                            |
+| R7  | Zod v4 API differences from v3 examples                             | Medium   | Project starts on v4. Mastra may peer-dep on v3 internally — check for `zod` version conflicts during T50 install. Resolve with `pnpm dedupe` if needed.                                  |
+| R8  | Uppy direct-to-R2 CORS issues                                       | Medium   | Route uploads through server proxy (`POST /api/upload`) in T41. Avoids CORS configuration entirely at the cost of slightly higher latency.                                                |
+| R9  | `content-collections` Vite plugin not removed from `vite.config.ts` | Low      | T01 removes both the package and the plugin import in the same commit. Build will fail fast if import is missed.                                                                          |
+| R10 | `createCampaign` not seeding world event types                      | Medium   | T45 patches `createCampaign` within the same transaction. After T45, write a quick smoke test: create a campaign, assert 24 rows in `world_event_types` for that campaign.                |
 
 ---
 
@@ -1663,8 +1949,9 @@ T01 → T02 → T03 → T06 → T07 → T08 → T09 → T10 → T11 → T13 → 
 ```
 
 **Parallelizable after T11:**
+
 - T16 (Sessions schema) || T21 (NPC schema) || T28 (Factions schema) || T30 (PC schema) || T34 (Relationships schema) || T39 (R2 client) || T43 (World Events schema) || T44 (Zod event schemas — no DB dep)
 
 ---
 
-*Last updated: 2026-03-01*
+_Last updated: 2026-03-01_
