@@ -18,7 +18,7 @@
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
-    "db:migrate:run": "tsx src/shared/db/migrate.ts"
+    "db:migrate:run": "tsx --env-file=.env.local src/shared/db/migrate.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1000.0",
