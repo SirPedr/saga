@@ -81,7 +81,7 @@ BETTER_AUTH_SECRET=
 ## Phase 0 — Foundation Cleanup & Scaffolding
 
 ### T01 · Remove demo artifacts
-**Status:** `[ ]` | **Depends:** —
+**Status:** `[x]` | **Depends:** —
 
 **Delete:**
 - `src/routes/blog.$slug.tsx`
