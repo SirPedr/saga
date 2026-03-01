@@ -185,7 +185,7 @@ src/shared/hooks/
 
 ### T03 · Update Drizzle config for multi-file schema glob
 
-**Status:** `[ ]` | **Depends:** T02
+**Status:** `[x]` | **Depends:** T02
 
 **Modify `drizzle.config.ts`:**
 
@@ -216,7 +216,7 @@ Remove the schema import — Drizzle client doesn't need the schema object for q
 
 ### T04 · Add missing core packages
 
-**Status:** `[ ]` | **Depends:** T01
+**Status:** `[x]` | **Depends:** T01
 
 **Run:**
 
@@ -236,7 +236,7 @@ pnpm add @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
 
 ### T05 · Docker Compose + local DB setup
 
-**Status:** `[ ]` | **Depends:** —
+**Status:** `[x]` | **Depends:** —
 
 **Create `docker-compose.yml`** at repo root:
 
