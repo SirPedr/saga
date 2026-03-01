@@ -266,7 +266,7 @@ Note: omit the `app` service for now — developers run `pnpm dev` directly.
 
 ### T06 · Shared DB client + pgvector migration
 
-**Status:** `[ ]` | **Depends:** T03, T05
+**Status:** `[x]` | **Depends:** T03, T05
 
 **Modify `src/shared/db/client.ts`** — finalize with Pool and connection validation:
 
