@@ -19,6 +19,9 @@ const config = defineConfig({
   ],
   test: {
     passWithNoTests: true,
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
   },
 })
 
