@@ -4,8 +4,8 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import { QueryClient } from '@tanstack/react-query'
-import { render  } from '@testing-library/react'
-import type {RenderOptions} from '@testing-library/react';
+import { render } from '@testing-library/react'
+import type { RenderOptions } from '@testing-library/react'
 import { routeTree } from '#/routeTree.gen'
 
 interface RenderWithRouterOptions extends Omit<RenderOptions, 'wrapper'> {

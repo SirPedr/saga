@@ -74,7 +74,7 @@ describe('LoginForm', () => {
     await user.type(screen.getByLabelText(/password/i), 'supersecret')
     await user.click(screen.getByRole('button', { name: /sign in/i }))
 
-    await screen.findByText('Campaigns')
+    await screen.findByText('Campaigns', { selector: 'main' })
     expect(router.state.location.pathname).toBe('/campaigns')
   })
 

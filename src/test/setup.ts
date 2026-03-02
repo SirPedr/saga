@@ -15,6 +15,14 @@ vi.mock('@tanstack/react-query-devtools', () => ({
   ReactQueryDevtoolsPanel: () => null,
 }))
 
+// Server functions call getRequest() which requires H3's AsyncLocalStorage —
+// that runtime context does not exist in jsdom. Mock them so beforeLoad hooks
+// in routes like /login can run without crashing.
+vi.mock('#/features/auth/server', () => ({
+  getSession: vi.fn().mockResolvedValue(null),
+  signOut: vi.fn().mockResolvedValue(undefined),
+}))
+
 // The api/auth/$ route imports the server-side auth instance, which imports the
 // Drizzle client, which throws if DATABASE_URL is not set. Mock it so the route
 // tree can load in jsdom without a real database connection.
