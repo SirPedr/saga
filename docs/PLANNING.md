@@ -345,7 +345,7 @@ export const auth = betterAuth({
 
 ### T09 · Login page + signOut action
 
-**Status:** `[ ]` | **Depends:** T08
+**Status:** `[x]` | **Depends:** T08
 
 **Create `src/features/auth/components/LoginForm.tsx`:**
 
