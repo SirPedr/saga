@@ -6,7 +6,7 @@ export default function BetterAuthHeader() {
 
   if (isPending) {
     return (
-      <div className="h-8 w-8 bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
+      <div className="h-8 w-8 animate-pulse bg-(--vellum-3)" />
     )
   }
 
@@ -14,10 +14,14 @@ export default function BetterAuthHeader() {
     return (
       <div className="flex items-center gap-2">
         {session.user.image ? (
-          <img src={session.user.image} alt="" className="h-8 w-8" />
+          <img
+            src={session.user.image}
+            alt=""
+            className="h-8 w-8 border border-(--line)"
+          />
         ) : (
-          <div className="h-8 w-8 bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-            <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+          <div className="flex h-8 w-8 items-center justify-center border border-(--chip-line) bg-(--chip-bg)">
+            <span className="font-display text-xs font-semibold text-(--amber)">
               {session.user.name.charAt(0).toUpperCase() || 'U'}
             </span>
           </div>
@@ -26,7 +30,7 @@ export default function BetterAuthHeader() {
           onClick={() => {
             void authClient.signOut()
           }}
-          className="flex-1 h-9 px-4 text-sm font-medium bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+          className="h-8 border border-(--line) bg-(--vellum-3) px-3 text-xs font-semibold text-(--ink-soft) transition hover:border-(--amber) hover:text-(--ink)"
         >
           Sign out
         </button>
@@ -36,8 +40,8 @@ export default function BetterAuthHeader() {
 
   return (
     <Link
-      to="/"
-      className="h-9 px-4 text-sm font-medium bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors inline-flex items-center"
+      to="/login"
+      className="inline-flex h-8 items-center border border-(--chip-line) bg-(--chip-bg) px-3 text-xs font-semibold text-(--amber) no-underline transition hover:border-(--amber) hover:text-(--amber-deep)"
     >
       Sign in
     </Link>

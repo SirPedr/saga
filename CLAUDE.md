@@ -139,3 +139,96 @@ Use the `pgvector/pgvector:pg16` Docker image for local Postgres — it includes
 
 - Full architecture: `docs/ARCHITECTURE.md`
 - Build plan and task tracker: `docs/PLANNING.md`
+- Design system and tokens: `docs/design-system.md`
+
+---
+
+## Design Context
+
+### Users
+
+Dungeon Masters who are both passionate storytellers and productive planners. They use Saga to
+immerse themselves in their world-building process while staying organized and on task. DMs often
+work in dim environments during sessions, making dark mode the natural default. The ideal experience
+balances world-building atmosphere with clean, task-oriented UX — a well-crafted creative workspace
+that feels atmospheric enough to inspire and efficient enough to get real work done.
+
+### Brand Personality
+
+**Arcane, Intimate, Purposeful**
+
+Saga is a master DM's digitized grimoire — hand-annotated, worn at the edges, but meticulously
+organized. The voice is quiet authority: confident, knowing, a little mysterious. The interface
+should feel like it holds secrets worth discovering. Think ink, parchment, candlelight. Dramatic
+and atmospheric, never garish.
+
+### Aesthetic Direction
+
+**Primary theme: Dark mode first.** All component design decisions begin with dark mode. Light mode
+is a valid but secondary experience (aged cream/parchment tones, not tropical or pastel).
+
+**Visual metaphor: Ink + magic grimoire.** An ancient spellbook digitized — dark vellum backgrounds
+with warm undertones, aged-ink text hierarchy, amber/candlelight accents, subtle texture suggesting
+paper or parchment. Components feel like journal entries or field notes. Cards have weight and
+depth rather than glass-morphism lightness.
+
+**Color palette — arcane/grimoire:**
+
+| Token           | Purpose                         | Dark Mode                | Light Mode               |
+| --------------- | ------------------------------- | ------------------------ | ------------------------ |
+| `--vellum`      | Page background                 | `#0f0d0a`                | `#f5f0e8`                |
+| `--vellum-2`    | Elevated surface                | `#17140f`                | `#ede6d6`                |
+| `--vellum-3`    | Card / panel                    | `#1e1a14`                | `#e5dcc6`                |
+| `--ink`         | Primary text                    | `#e8ddc8`                | `#1a1510`                |
+| `--ink-soft`    | Secondary text                  | `#a08c6e`                | `#4a3f2e`                |
+| `--ink-faint`   | Placeholder / disabled          | `#5a4e3a`                | `#9a8e78`                |
+| `--amber`       | Primary accent / interactive    | `#d4a348`                | `#b8862c`                |
+| `--amber-deep`  | Accent hover / pressed          | `#b8862c`                | `#9a6e1e`                |
+| `--arcane`      | Secondary accent (cool magical) | `#4a6e8a`                | `#2a4e6a`                |
+| `--arcane-soft` | Arcane hover                    | `#3a5a74`                | `#1e3e54`                |
+| `--line`        | Borders / dividers              | `rgba(232,221,200,0.10)` | `rgba(26,21,16,0.12)`    |
+| `--crimson`     | Destructive / danger            | `#c43030`                | `#a02020`                |
+| `--glint`       | Inset highlight                 | `rgba(255,240,200,0.04)` | `rgba(255,255,255,0.70)` |
+
+**Typography:**
+
+- **Display / headings**: Fraunces (serif, 500–700) — the editorial anchor; earns every use
+- **Body / UI**: Manrope (sans-serif, 400–700) — precise but warm
+- **Labels / kickers**: Manrope 700, uppercase, wide letter-spacing — arcane annotation style
+- **Code / IDs / data**: System monospace (`ui-monospace, 'Cascadia Code', monospace`)
+
+Typography is the primary design tool. Hierarchy is communicated through type weight and scale
+before color. Every heading must earn its display treatment.
+
+**Component feel:**
+
+- Cards and panels: deep vellum surface, subtle sepia-ink border, soft warm inner glow
+- Dividers: ink-stroke style — thin, warm-toned, slightly transparent
+- Shadows: layered warm-dark (not cool/blue-gray)
+- Hover/interactive states: amber glow or subtle border brightening, never jarring color shifts
+- Decorative touches: minimal arcane-feeling geometric or annotation-style flourishes (restrained)
+
+**Anti-references — Saga must NEVER look like:**
+
+- Dragon's Lair / DndBeyond: maximalist fantasy marketplace aesthetic
+- Monday.com / Airtable: generic SaaS color-blocking
+- Neon / cyberpunk UI
+- Gamified dashboards (XP bars, achievement badges, leveling chrome)
+- Tropical / coastal aesthetics (lagoon blues, palm greens, sandy pastels — fully retired)
+
+### Design Principles
+
+1. **Typography First** — Hierarchy is built from type, not color blasts. Fraunces earns its
+   display moments. Every label, heading, and body span should feel deliberate.
+
+2. **Atmospheric but Functional** — The interface sets a mood without sacrificing usability.
+   Texture and shadow create depth; the DM's content (campaigns, NPCs, sessions) is always the hero.
+
+3. **Ink Over Chrome** — Prefer warm-dark surfaces, sepia borders, and shadow depth over
+   glass-morphism and bright gradients. Components feel crafted and grounded.
+
+4. **Dark Mode is Canon** — All new components are designed dark-first. Light mode should evoke
+   aged parchment and cream.
+
+5. **Quiet Confidence** — No excessive animation, badges, or gamification. Motion is purposeful
+   and minimal. The tool respects the DM's creative focus and never competes with their content.

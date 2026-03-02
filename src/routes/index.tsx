@@ -1,88 +1,83 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({ component: HomePage })
 
-function App() {
+function HomePage() {
   return (
     <main className="page-wrap px-4 pb-8 pt-14">
-      <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-        <p className="island-kicker mb-3">TanStack Start Base Template</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-[var(--sea-ink)] sm:text-6xl">
-          Island hours, but for product teams.
+      {/* Hero */}
+      <section className="island-shell rise-in relative overflow-hidden px-6 py-10 sm:px-10 sm:py-14">
+        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 bg-[radial-gradient(circle,rgba(190,142,54,0.14),transparent_66%)]" />
+        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 bg-[radial-gradient(circle,rgba(62,98,120,0.10),transparent_66%)]" />
+        <p className="island-kicker mb-3">Campaign planning, reimagined</p>
+        <h1 className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-(--ink) sm:text-6xl">
+          Your world. Every thread, remembered.
         </h1>
-        <p className="mb-8 max-w-2xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
-          A tropical, breathable app starter with full-document SSR, server
-          functions, streaming, and type-safe routing. Calm on the eyes. Fast in
-          production.
+        <p className="mb-8 max-w-2xl text-base text-(--ink-soft) sm:text-lg">
+          Saga is an AI-first grimoire for dungeon masters. Track NPCs,
+          factions, and sessions — let the AI surface connections you've
+          forgotten, propose world changes, and plan your next session with you.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
-            href="/blog"
-            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 text-sm font-semibold text-[var(--lagoon-deep)] no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
+            href="/campaigns"
+            className="border border-[rgba(190,142,54,0.35)] bg-[rgba(190,142,54,0.10)] px-5 py-2.5 text-sm font-semibold text-(--amber) no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(190,142,54,0.20)]"
           >
-            Explore Posts
+            Open Campaigns
           </a>
           <a
-            href="https://tanstack.com/router"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-5 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)]"
+            href="/login"
+            className="border border-(--line) bg-[rgba(255,255,255,0.06)] px-5 py-2.5 text-sm font-semibold text-(--ink-soft) no-underline transition hover:-translate-y-0.5 hover:border-(--amber) hover:text-(--ink)"
           >
-            Router Guide
+            Sign In
           </a>
         </div>
       </section>
 
+      {/* Feature grid */}
       <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           [
-            'Type-Safe Routing',
-            'Routes and links stay in sync across every page.',
+            'NPC & Faction Tracking',
+            'Keep every character, rival, and faction organised with relationships mapped across your world.',
           ],
           [
-            'Server Functions',
-            'Call server code from your UI without creating API boilerplate.',
+            'AI-Assisted Planning',
+            'Describe your next session and the Planning Agent surfaces relevant lore, NPCs, and unresolved threads.',
           ],
           [
-            'Streaming by Default',
-            'Ship progressively rendered responses for faster experiences.',
+            'Session Analysis',
+            'After each session the Analysis Agent proposes world-state changes — you approve before anything is written.',
           ],
           [
-            'Tailwind Native',
-            'Design quickly with utility-first styling and custom tokens.',
+            'World Event Log',
+            'An append-only record of everything that has changed. AI always sees only the approved canon.',
           ],
         ].map(([title, desc], index) => (
           <article
             key={title}
-            className="island-shell feature-card rise-in rounded-2xl p-5"
+            className="island-shell feature-card rise-in p-5"
             style={{ animationDelay: `${index * 90 + 80}ms` }}
           >
-            <h2 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">
+            <h2 className="mb-2 text-base font-semibold text-(--ink)">
               {title}
             </h2>
-            <p className="m-0 text-sm text-[var(--sea-ink-soft)]">{desc}</p>
+            <p className="m-0 text-sm text-(--ink-soft)">{desc}</p>
           </article>
         ))}
       </section>
 
-      <section className="island-shell mt-8 rounded-2xl p-6">
-        <p className="island-kicker mb-2">Quick Start</p>
-        <ul className="m-0 list-disc space-y-2 pl-5 text-sm text-[var(--sea-ink-soft)]">
-          <li>
-            Edit <code>src/routes/index.tsx</code> to customize the hero and
-            product narrative.
-          </li>
-          <li>
-            Update <code>src/components/Header.tsx</code> and{' '}
-            <code>src/components/Footer.tsx</code> for brand links.
-          </li>
-          <li>
-            Add routes in <code>src/routes</code> and tweak visual tokens in{' '}
-            <code>src/styles.css</code>.
-          </li>
-        </ul>
+      {/* Status note */}
+      <section className="island-shell mt-8 p-6">
+        <p className="island-kicker mb-2">Early Access</p>
+        <p className="m-0 text-sm text-(--ink-soft)">
+          Saga is in active development. Sign in to start building your first
+          campaign, or{' '}
+          <a href="/campaigns" className="font-medium">
+            explore the demo campaign
+          </a>{' '}
+          to see the planning tools in action.
+        </p>
       </section>
     </main>
   )
