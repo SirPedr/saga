@@ -29,6 +29,18 @@ Refer to it freely while implementing. The sections most relevant to any given t
 
 ---
 
+## MCP tools — prefer these over reading source files
+
+When something is unclear, you need to check an API, or you're unsure how a library works, reach for these MCPs first rather than digging through implementation files in the repo.
+
+**shadcn MCP** — for anything shadcn/ui related: which components exist, how they're used, what props they accept, how to compose them. Use `mcp__shadcn__search_items_in_registries` to find components and `mcp__shadcn__get_item_examples_from_registries` to see usage examples. This is faster and more accurate than reading existing component files.
+
+**Context7 MCP** — for up-to-date library documentation and code examples. Whenever you're unsure about an API (TanStack Router, TanStack Query, TanStack Form, Drizzle ORM, Better Auth, Mastra, Zod v4, Tailwind v4, etc.), use `mcp__context7__resolve-library-id` then `mcp__context7__query-docs` to get current docs. Prefer this over guessing or inferring from existing code.
+
+The rule of thumb: if you'd otherwise open a library's source file or an existing feature file just to understand how something works, use the MCP instead.
+
+---
+
 ## Folder structure
 
 Every feature lives under `src/features/<domain>/`. Route files are thin shells — they import from features, never the reverse.
@@ -351,17 +363,25 @@ When only adding to an existing feature, touch only the files that need changing
 
 ## After implementation
 
-Once the implementation is complete and working, do all of these:
+Once the implementation is complete and working, do all of these in order:
 
 ### 1. Run `pnpm check`
 
-Run `pnpm check` (Prettier + ESLint autofix) and fix any errors it reports before considering the task done.
+Run `pnpm check` (Prettier + ESLint autofix) and fix any errors it reports before continuing.
 
-### 2. Commit the changes
+### 2. TypeScript type-check
+
+Run `pnpm tsc --noEmit` to catch any type errors. Fix all reported errors before continuing — do not skip or suppress them.
+
+### 3. Run tests
+
+Use the `/kcd-testing` skill to write and run tests for the code you just implemented. At minimum, cover the server functions and any non-trivial logic. For UI components, add component tests if the component has meaningful interaction or state. Fix any failing tests before continuing.
+
+### 4. Commit the changes
 
 Commit all changed files using conventional commit messages. Split into multiple commits if the changes span different domains or concerns (e.g. schema changes separate from UI changes, or unrelated features). Use the `/conventional-commit` skill if available.
 
-### 3. Update `docs/PLANNING.md`
+### 5. Update `docs/PLANNING.md`
 
 Mark the relevant task(s) as complete by changing their status from `[ ]` or `[~]` to `[x]`. The file uses the format:
 
@@ -369,7 +389,7 @@ Mark the relevant task(s) as complete by changing their status from `[ ]` or `[~
 **Status:** `[x]` | **Depends:** …
 ```
 
-### 4. Close the GitHub issue (if applicable)
+### 6. Close the GitHub issue (if applicable)
 
 If the work was requested as part of a GitHub issue, close it using the GitHub MCP tool:
 
