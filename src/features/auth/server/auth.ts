@@ -5,6 +5,7 @@ import { db } from '#/shared/db/client'
 import * as authSchema from '../db/schema'
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
   database: drizzleAdapter(db, { provider: 'pg', schema: authSchema }),
   emailAndPassword: {
     enabled: true,
