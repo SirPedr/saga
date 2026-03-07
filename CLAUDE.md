@@ -138,7 +138,7 @@ Use the `pgvector/pgvector:pg16` Docker image for local Postgres — it includes
 ## Further Reference
 
 - Full architecture: `docs/ARCHITECTURE.md`
-- Build plan and task tracker: `docs/PLANNING.md`
+- Task tracker: [GitHub Issues](https://github.com/SirPedr/saga/issues) — filter by `status:` and `area:` labels
 - Design system and tokens: `docs/design-system.md`
 
 ---
