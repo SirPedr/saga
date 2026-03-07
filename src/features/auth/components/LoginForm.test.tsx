@@ -1,9 +1,15 @@
 import { http, HttpResponse } from 'msw'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { server } from '#/mocks/node'
 import { renderWithRouter } from '#/test/utils'
+import { getSession } from '#/features/auth/server'
+
+vi.mock('#/features/auth/server', () => ({
+  getSession: vi.fn().mockResolvedValue(null),
+  signOut: vi.fn(),
+}))
 
 function renderLoginForm() {
   return renderWithRouter({ initialPath: '/login' })
@@ -66,11 +72,36 @@ describe('LoginForm', () => {
         }),
       ),
     )
-
     const user = userEvent.setup()
     const { router } = renderLoginForm()
 
-    await user.type(await screen.findByLabelText(/email/i), 'dm@example.com')
+    // Wait for login form to be visible (initial render complete, initial getSession call done)
+    await screen.findByLabelText(/email/i)
+
+    // Set session mock for the /campaigns navigation that happens after sign-in
+    vi.mocked(getSession).mockResolvedValueOnce({
+      session: {
+        id: 'sess-1',
+        userId: '1',
+        token: 'tok',
+        expiresAt: new Date(Date.now() + 60_000),
+        ipAddress: null,
+        userAgent: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      user: {
+        id: '1',
+        email: 'dm@example.com',
+        name: 'DM',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    } as any)
+
+    await user.type(screen.getByLabelText(/email/i), 'dm@example.com')
     await user.type(screen.getByLabelText(/password/i), 'supersecret')
     await user.click(screen.getByRole('button', { name: /sign in/i }))
 

@@ -372,7 +372,7 @@ export const auth = betterAuth({
 
 ### T10 · Root layout + navigation
 
-**Status:** `[ ]` | **Depends:** T09
+**Status:** `[x]` | **Depends:** T09
 
 **Create `src/shared/components/Layout.tsx`:** Wraps children with a top-level shell (header + main content area).
 

@@ -6,13 +6,14 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/Footer'
-import Header from '../components/Header'
 
 import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
+import { Layout } from '#/shared/components/Layout'
+import { Nav } from '#/shared/components/Nav'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { getSession } from '#/features/auth/server'
@@ -64,9 +65,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(212,163,72,0.22)]">
         <TanStackQueryProvider>
-          <Header />
-          {children}
-          <Footer />
+          <Layout>
+            <Nav />
+            {children}
+            <Footer />
+          </Layout>
           <TanStackDevtools
             config={{
               position: 'bottom-right',
