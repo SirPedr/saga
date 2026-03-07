@@ -8,8 +8,3 @@ export const getSession = createServerFn({ method: 'GET' }).handler(
     return auth.api.getSession({ headers: request.headers })
   },
 )
-
-export const signOut = createServerFn({ method: 'POST' }).handler(async () => {
-  const request = getRequest()
-  await auth.api.signOut({ headers: request.headers })
-})

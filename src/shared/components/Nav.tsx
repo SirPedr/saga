@@ -1,13 +1,12 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { authClient } from '#/features/auth/server/auth-client'
-import { signOut } from '#/features/auth/server'
 
 export function Nav() {
   const router = useRouter()
   const { data: session, isPending } = authClient.useSession()
 
   const handleSignOut = async () => {
-    await signOut()
+    await authClient.signOut()
     await router.navigate({ to: '/login' })
   }
 
