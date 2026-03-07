@@ -381,27 +381,23 @@ Use the `/kcd-testing` skill to write and run tests for the code you just implem
 
 Commit all changed files using conventional commit messages. Split into multiple commits if the changes span different domains or concerns (e.g. schema changes separate from UI changes, or unrelated features). Use the `/conventional-commit` skill if available.
 
-### 5. Update `docs/PLANNING.md`
+### 5. Close the GitHub issue
 
-Mark the relevant task(s) as complete by changing their status from `[ ]` or `[~]` to `[x]`. The file uses the format:
+Task tracking has moved to GitHub Issues (https://github.com/SirPedr/saga/issues). `docs/PLANNING.md` no longer exists.
 
-```
-**Status:** `[x]` | **Depends:** …
-```
-
-### 6. Close the GitHub issue (if applicable)
-
-If the work was requested as part of a GitHub issue, close it using the GitHub MCP tool:
+Each task maps 1-to-1 to an issue: T11 → #11, T12 → #12, etc. When a task is complete, close the corresponding issue using the GitHub MCP tool:
 
 ```
 mcp__github__issue_write({
   method: "update",
-  owner: <repo-owner>,
-  repo: <repo-name>,
+  owner: "SirPedr",
+  repo: "saga",
   issue_number: <issue-number>,
   state: "closed",
   state_reason: "completed"
 })
 ```
 
-If you don't know the issue number or which PLANNING.md task to mark, ask the user before making any changes.
+Also update the label: remove `status: todo` or `status: in-progress` and add `status: done`.
+
+If you don't know which issue corresponds to the work that was done, ask the user before closing anything.
