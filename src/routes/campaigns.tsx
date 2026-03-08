@@ -1,5 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { CampaignListPage } from '#/features/campaigns/components/CampaignListPage'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { campaignListQueryOptions } from '#/features/campaigns/server/queries'
 
 export const Route = createFileRoute('/campaigns')({
@@ -10,5 +9,5 @@ export const Route = createFileRoute('/campaigns')({
   },
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(campaignListQueryOptions()),
-  component: CampaignListPage,
+  component: () => <Outlet />,
 })
