@@ -67,7 +67,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <TanStackQueryProvider>
           <Layout>
             <Nav />
-            {children}
+            <main className="flex-1">{children}</main>
             <Footer />
           </Layout>
           <TanStackDevtools
