@@ -2,6 +2,7 @@ import '@testing-library/jest-dom'
 import { vi, beforeAll, beforeEach, afterEach, afterAll } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { server } from '#/mocks/node'
+import * as campaignServer from '#/features/campaigns/server/index'
 
 // The devtools components throw "Devtools is not mounted" in jsdom because they
 // require a browser devtools panel host. Render nothing instead.
@@ -63,15 +64,55 @@ vi.mock('#/features/auth/server/auth-client', () => ({
   },
 }))
 
+// Replace the TanStack Query singleton provider with a test-friendly version.
+// Components call useQueryClient() which reads from QueryClientProvider —
+// whichever client wraps the component tree. By mocking the root provider here,
+// all components in tests share the same QueryClient that renderWithRouter uses.
+vi.mock('#/integrations/tanstack-query/root-provider', async () => {
+  const { QueryClient, QueryClientProvider } = await import('@tanstack/react-query')
+  const React = await import('react')
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+  })
+  return {
+    getContext: () => ({ queryClient }),
+    default: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(QueryClientProvider, { client: queryClient }, children),
+  }
+})
+
+// Campaign server functions call getRequest() / auth / DB — none of which exist in
+// jsdom. The factory prevents the real module (and its DB client) from loading.
+// Return values come from vi.spyOn() defaults in beforeEach below.
+vi.mock('#/features/campaigns/server/index', () => ({
+  listCampaigns: vi.fn(),
+  listSystems: vi.fn(),
+  getCampaign: vi.fn(),
+  createCampaign: vi.fn(),
+  updateCampaign: vi.fn(),
+  deleteCampaign: vi.fn(),
+}))
+
 beforeAll(() => server.listen())
-afterEach(() => {
+afterEach(async () => {
   cleanup()
+  vi.restoreAllMocks()
   server.resetHandlers()
+  const { getContext } = await import('#/integrations/tanstack-query/root-provider')
+  getContext().queryClient.clear()
 })
 afterAll(() => server.close())
 
 beforeEach(() => {
   localStorage.clear()
+  // Re-establish safe defaults after vi.restoreAllMocks() clears them.
+  // Individual tests override these with their own vi.spyOn() calls in beforeEach or inline.
+  vi.spyOn(campaignServer, 'listCampaigns').mockResolvedValue([])
+  vi.spyOn(campaignServer, 'listSystems').mockResolvedValue([])
+  vi.spyOn(campaignServer, 'getCampaign').mockResolvedValue(null as any)
+  vi.spyOn(campaignServer, 'createCampaign').mockResolvedValue(null as any)
+  vi.spyOn(campaignServer, 'updateCampaign').mockResolvedValue(null as any)
+  vi.spyOn(campaignServer, 'deleteCampaign').mockResolvedValue(undefined)
 })
 
 Object.defineProperty(window, 'matchMedia', {
@@ -83,3 +124,30 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
   })),
 })
+
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}))
+
+window.HTMLElement.prototype.scrollIntoView = vi.fn()
+window.HTMLElement.prototype.hasPointerCapture = vi.fn()
+window.HTMLElement.prototype.releasePointerCapture = vi.fn()
+
+// Radix UI components check animation-duration to decide whether to wait for
+// exit animations before unmounting. Returning "0s" makes them skip the wait,
+// preventing tests from hanging on dialog/popover close.
+const _getComputedStyle = window.getComputedStyle
+window.getComputedStyle = (el, pseudoEl) => {
+  const style = _getComputedStyle(el, pseudoEl)
+  return new Proxy(style, {
+    get(target, prop) {
+      if (prop === 'animationDuration' || prop === 'transitionDuration')
+        return '0s'
+      return typeof target[prop as keyof typeof target] === 'function'
+        ? (target[prop as keyof typeof target] as () => unknown).bind(target)
+        : target[prop as keyof typeof target]
+    },
+  })
+}
