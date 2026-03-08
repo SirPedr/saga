@@ -1,4 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { CampaignListPage } from '#/features/campaigns/components/CampaignListPage'
+import { campaignListQueryOptions } from '#/features/campaigns/server/queries'
 
 export const Route = createFileRoute('/campaigns')({
   beforeLoad: ({ context }) => {
@@ -6,9 +8,7 @@ export const Route = createFileRoute('/campaigns')({
       throw redirect({ to: '/login' })
     }
   },
-  component: CampaignsPage,
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(campaignListQueryOptions()),
+  component: CampaignListPage,
 })
-
-function CampaignsPage() {
-  return <main className="p-8">Campaigns</main>
-}
