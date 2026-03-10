@@ -1,16 +1,18 @@
 ---
 name: kcd-testing
 description: >
-  Write, review, or plan tests for TypeScript code — unit, integration, component, or e2e — following Kent C.
-  Dodds' principles (Vitest, @testing-library/react, TanStack Query/Router/Form, Playwright).
+  Write, review, or plan integration and E2E tests for this project using Playwright and a real PostgreSQL
+  database. No mocks, no Vitest, no jsdom — full-stack tests only, seeding the DB with the data each test needs.
 
   Trigger this skill for ANY of the following:
-  - Writing new tests: "write tests for X", "add test coverage", "TDD this", "test this function/component"
+  - Writing new tests: "write tests for X", "add test coverage", "TDD this", "test this flow"
   - Checking behavior: "does X work correctly?", "make sure this behaves correctly", "does this logic work?"
   - After building something: "i just finished X, can you make sure it works"
   - Reviewing existing tests: "review my test file", "are these tests good?", "check my tests"
   - Planning tests: "what should I test?", "what cases should I cover before deploying?", "what should I manually test?"
   - E2E tests: "set up playwright tests", "write e2e tests for the login flow"
+  - Browser automation: "test if the page looks right", "check if login redirects correctly", "take a screenshot", "check responsive design", "validate UX", "test this form"
+  - Ad-hoc browser tasks: "automate this browser interaction", "check for broken links", "fill out this form and see what happens"
   - Implicit requests: "does the redirect logic actually work?", "confirm that X behaves as expected"
 
   When in doubt, trigger this skill — it's better to consult it and decide testing isn't needed than to miss it.
@@ -18,357 +20,570 @@ description: >
 
 ## Core Philosophy
 
-Kent C. Dodds' guiding principle: **test behavior, not implementation**. Users don't care about internal state or private methods — they care about what they can see and do. Write tests that interact with the UI the way a real person would, and assert on what they'd observe.
+Kent C. Dodds' guiding principle: **test behavior, not implementation**. Users don't care about internal state or private methods — they care about what they can see and do.
+
+Applied here: every test drives a real browser against a real server backed by a real PostgreSQL database. There are no mocks, no synthetic DOM, no unit-level isolation. Tests interact with the app the way a real person would and assert on what they observe in the UI.
 
 Key tenets:
 
 - Test what users experience, not how the code is structured
-- Prefer integration tests over micro-unit tests
-- Avoid mocking unless you're at a real system boundary (network, browser API)
-- Never test internal state — only observable outputs
+- Avoid mocking — use real infrastructure instead
+- Each test owns its data: seed exactly what's needed, nothing more
+- Never assert on internal state — only what the user can see
+
+---
+
+## Stack
+
+| Concern | Tool |
+|---|---|
+| Test runner | Playwright (`@playwright/test`) |
+| Browser | Chromium (headless in CI, visible locally) |
+| Database | Real PostgreSQL — same schema as production, cleared between tests |
+| DB access in tests | Drizzle ORM (direct queries for seeding and teardown) |
+| Ad-hoc automation | playwright-skill runner (scripts to `/tmp`) |
+
+There is no Vitest, no jsdom, no `@testing-library/react`, no `userEvent`. Everything comes from Playwright's API.
 
 ---
 
 ## Project Setup
 
-**Stack**: Vitest + jsdom + @testing-library/react
-
-**Required — install if missing:**
+**Check for an existing `playwright.config.ts`** first — if it exists, confirm it's wired to a test database. If not, install Playwright:
 
 ```bash
-pnpm add -D @testing-library/user-event @testing-library/jest-dom
+pnpm add -D @playwright/test
+npx playwright install chromium
 ```
 
-**Vitest config** — confirm `vite.config.ts` has a `test` block, or create `vitest.config.ts`:
+**`playwright.config.ts`** — configure a test database URL via env, and use `globalSetup` to run migrations on each full run:
 
 ```ts
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test/setup.ts'],
+  testDir: './tests',
+  fullyParallel: false,          // avoid DB conflicts; enable per-worker isolation if needed
+  retries: process.env.CI ? 2 : 0,
+  use: {
+    baseURL: 'http://localhost:3000',
+    headless: !!process.env.CI,
+    video: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
+  globalSetup: './tests/global-setup.ts',
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  ],
 })
 ```
 
-**Setup file** (`src/test/setup.ts`) — this is where global mocks live, not in individual test files:
+**`tests/global-setup.ts`** — runs once before the entire suite:
 
 ```ts
-import '@testing-library/jest-dom'
-import { vi, beforeEach, afterEach } from 'vitest'
-import { cleanup } from '@testing-library/react'
+import { execSync } from 'child_process'
 
-afterEach(() => {
-  cleanup()
-})
-
-beforeEach(() => {
-  localStorage.clear()
-})
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation((query: string) => ({
-    matches: false,
-    media: query,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  })),
-})
+export default async function globalSetup() {
+  // Apply migrations to the test database
+  execSync('pnpm db:migrate', {
+    env: { ...process.env, DATABASE_URL: process.env.TEST_DATABASE_URL },
+    stdio: 'inherit',
+  })
+}
 ```
 
-Browser API mocks like `matchMedia` and `localStorage.clear()` belong in the global setup file — not scattered across individual test files' `beforeEach` blocks. This keeps tests lean and ensures consistent starting state without repetition.
+**`.env.test`** — point to a separate PostgreSQL instance for tests:
+
+```
+TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5433/saga_test
+```
+
+Start a test Postgres instance alongside the dev one (different port):
+
+```bash
+docker run -d \
+  --name saga-test-db \
+  -e POSTGRES_DB=saga_test \
+  -e POSTGRES_PASSWORD=postgres \
+  -p 5433:5432 \
+  pgvector/pgvector:pg16
+```
 
 ---
 
 ## File Placement & Naming
 
-Co-locate test files next to the source file:
+```
+tests/
+  helpers/
+    db.ts          ← shared DB seeding and teardown utilities
+    auth.ts        ← shared login helpers
+  auth/
+    login.spec.ts
+    signup.spec.ts
+  campaigns/
+    campaign-crud.spec.ts
+    campaign-detail.spec.ts
+  sessions/
+    session-planning.spec.ts
+```
 
-```
-src/
-  components/
-    ThemeToggle.tsx
-    ThemeToggle.test.tsx   ← here
-  lib/
-    utils.ts
-    utils.test.ts          ← here
-```
+Keep spec files organized by feature domain, mirroring `src/features/`.
 
 ---
 
-## Query Priority
+## Database Strategy
 
-Always use the most semantic query available — in this exact order:
+Each test is responsible for the data it needs. This keeps tests independent and avoids order-dependency.
 
-1. `getByRole` — buttons, headings, inputs, links, checkboxes, etc.
-2. `getByLabelText` — form fields associated with a label
-3. `getByPlaceholderText` — inputs without a label
+**Shared DB helper** (`tests/helpers/db.ts`):
+
+```ts
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
+import * as campaignSchema from '#/features/campaigns/db/schema'
+import * as sessionSchema from '#/features/sessions/db/schema'
+
+const client = postgres(process.env.TEST_DATABASE_URL!)
+export const testDb = drizzle(client, { schema: { ...campaignSchema, ...sessionSchema } })
+
+export async function clearDatabase() {
+  // Delete in reverse dependency order
+  await testDb.delete(sessionSchema.sessions)
+  await testDb.delete(campaignSchema.campaigns)
+  // ... other tables
+}
+
+export async function seedCampaign(overrides?: Partial<typeof campaignSchema.campaigns.$inferInsert>) {
+  const [campaign] = await testDb.insert(campaignSchema.campaigns).values({
+    name: 'Test Campaign',
+    system: 'D&D 5e',
+    ...overrides,
+  }).returning()
+  return campaign
+}
+```
+
+**Pattern in each spec file:**
+
+```ts
+import { test, expect } from '@playwright/test'
+import { clearDatabase, seedCampaign } from '../helpers/db'
+
+test.beforeEach(async () => {
+  await clearDatabase()
+})
+
+test('shows campaign in the list', async ({ page }) => {
+  const campaign = await seedCampaign({ name: 'The Forgotten Realm' })
+
+  await page.goto('/campaigns')
+
+  await expect(page.getByRole('heading', { name: 'The Forgotten Realm' })).toBeVisible()
+})
+```
+
+Feed the DB the exact data the test needs — no shared fixtures, no global seed state.
+
+---
+
+## Semantic Locators
+
+Always use the most semantic locator available. Tests should read like a description of what a user does — not like DOM queries.
+
+**Priority order** (use the highest that applies):
+
+1. `getByRole` — buttons, headings, inputs, links, checkboxes
+2. `getByLabel` — form fields with an associated label
+3. `getByPlaceholder` — inputs without a visible label
 4. `getByText` — visible text content
-5. `getByDisplayValue` — current value of a form field
-6. `getByAltText` — images
-7. `getByTitle` — elements with a title attribute
-8. `getByTestId` — **last resort only**, when no semantic query fits
+5. `getByAltText` — images
+6. `getByTitle` — elements with a title attribute
+7. `getByTestId` — **last resort only**
 
-Use `screen.*` for all queries — never destructure from `render()`.
-
-**Use the `name` option in `getByRole` to assert text content and accessible name simultaneously.** This is both a query and an assertion — it's more expressive than getting a generic element and then asserting text separately.
-
-```tsx
-screen.getByRole('button', { name: /Auto/i })
-screen.getByRole('button', {
-  name: 'Theme mode: auto (system). Click to switch to light mode.',
-})
-screen.getByRole('heading', { name: /settings/i })
-```
-
----
-
-## Assertion Hierarchy
-
-Choose the most semantically accurate assertion. The more specific the matcher, the more confidence the test gives:
-
-**For visibility** — prefer `toBeVisible()` over `toBeInTheDocument()`. Being in the document is a weaker guarantee than being visible to the user.
-
-```tsx
-expect(screen.getByRole('button', { name: /submit/i })).toBeVisible()
-```
-
-**For accessible names** — prefer `toHaveAccessibleName()` over `toHaveAttribute('aria-label', ...)`. Accessible names can come from aria-label, aria-labelledby, or visible text — `toHaveAccessibleName()` captures all of them correctly.
-
-```tsx
-expect(button).toHaveAccessibleName(
-  'Theme mode: auto (system). Click to switch to light mode.',
-)
-```
-
-Use `toHaveAttribute('aria-label', ...)` only when you specifically need to assert on the raw HTML attribute rather than the computed accessible name.
-
-**For form fields** — `toHaveValue()`, `toBeChecked()`, `toBeDisabled()` are more specific than text-content assertions.
-
----
-
-## userEvent Over fireEvent
-
-Always use `userEvent` — it simulates real browser events including focus, blur, keyboard events, and pointer interactions. `fireEvent` dispatches synthetic events and misses most of what a browser actually does.
+**Good:**
 
 ```ts
-import userEvent from '@testing-library/user-event'
-
-const user = userEvent.setup()
-await user.click(screen.getByRole('button', { name: /submit/i }))
-await user.type(screen.getByLabelText(/email/i), 'test@example.com')
-await user.selectOptions(screen.getByRole('combobox'), 'option-value')
+await page.getByRole('button', { name: /create campaign/i }).click()
+await page.getByLabel('Campaign name').fill('The Forgotten Realm')
+await page.getByRole('combobox', { name: /system/i }).selectOption('D&D 5e')
 ```
 
-Always call `userEvent.setup()` once per test (not inside beforeEach), and `await` every interaction.
-
----
-
-## it.each() for Repetitive Test Cases
-
-When multiple tests share the same structure and only differ in input/output values, use `it.each()` instead of repeating the same `it()` block. This keeps tests DRY without sacrificing readability.
+**Bad — never write this:**
 
 ```ts
-it.each([
-  ['false', false],
-  ['undefined', undefined],
-  ['null', null],
-])('ignores %s values', (_label, falsy) => {
-  expect(cn('foo', falsy, 'bar')).toBe('foo bar')
-})
-
-it.each([
-  ['p-4', 'p-6', 'p-6'],
-  ['text-red-500', 'text-blue-700', 'text-blue-700'],
-  ['m-2', 'm-8', 'm-8'],
-])('resolves conflicting %s and %s by keeping the last', (a, b, expected) => {
-  expect(cn(a, b)).toBe(expected)
-})
+await page.click('button[type="submit"]')
+await page.fill('input[name="campaignName"]', 'The Forgotten Realm')
+await page.locator('.campaign-card').first().click()
 ```
 
-Use `it.each()` when 3 or more tests have the same shape. For just 2 tests, repeating is fine.
+CSS selectors test structure. Semantic locators test what the user sees. When the markup changes but the button still says "Create campaign", the semantic test survives; the CSS selector breaks.
+
+The `name` option in `getByRole` is simultaneously a selector and an assertion — targeting the element by its accessible name means you've already verified what it says:
+
+```ts
+page.getByRole('button', { name: /sign in/i })         // finds AND verifies label
+page.getByRole('heading', { name: /your campaigns/i })  // finds AND verifies heading text
+```
 
 ---
 
-## Provider Wrappers
+## Assertions
 
-Components that use TanStack Query, Router, or Form need their providers. Create a shared render helper per test file (or in `src/test/utils.tsx` if reused widely):
+Playwright assertions are auto-retrying — they poll until passing or timing out. Prefer them over checking synchronous state.
 
-**TanStack Query:**
+**For visibility** — `toBeVisible()` is the primary assertion. It checks the element exists and is visible to the user:
 
-```tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render } from '@testing-library/react'
+```ts
+await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible()
+await expect(page.getByText(/session saved/i)).toBeVisible()
+```
 
-function renderWithQuery(ui: React.ReactElement) {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  })
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
-  )
+**For URL changes:**
+
+```ts
+await expect(page).toHaveURL('/dashboard')
+await expect(page).toHaveURL(/\/campaigns\/\d+/)
+```
+
+**For form values:**
+
+```ts
+await expect(page.getByLabel('Campaign name')).toHaveValue('The Forgotten Realm')
+```
+
+**For absence:**
+
+```ts
+await expect(page.getByText(/delete campaign/i)).not.toBeVisible()
+```
+
+**For page title:**
+
+```ts
+await expect(page).toHaveTitle(/campaigns/i)
+```
+
+Don't assert on CSS classes, internal component state, or network request payloads. Assert on what the user sees.
+
+---
+
+## Patterns by Flow Type
+
+### Authentication Flows
+
+```ts
+import { test, expect } from '@playwright/test'
+import { clearDatabase, seedUser } from '../helpers/db'
+
+test.beforeEach(async () => {
+  await clearDatabase()
+})
+
+test('redirects to dashboard after login', async ({ page }) => {
+  await seedUser({ email: 'dm@saga.app', password: 'password123' })
+
+  await page.goto('/login')
+  await page.getByLabel('Email').fill('dm@saga.app')
+  await page.getByLabel('Password').fill('password123')
+  await page.getByRole('button', { name: /sign in/i }).click()
+
+  await expect(page).toHaveURL('/dashboard')
+  await expect(page.getByRole('heading', { name: /your campaigns/i })).toBeVisible()
+})
+
+test('shows error on invalid credentials', async ({ page }) => {
+  await page.goto('/login')
+  await page.getByLabel('Email').fill('nobody@example.com')
+  await page.getByLabel('Password').fill('wrong')
+  await page.getByRole('button', { name: /sign in/i }).click()
+
+  await expect(page.getByText(/invalid credentials/i)).toBeVisible()
+  await expect(page).toHaveURL('/login')
+})
+```
+
+**Shared login helper** (`tests/helpers/auth.ts`) — reuse across specs that need an authenticated session:
+
+```ts
+import { Page } from '@playwright/test'
+
+export async function loginAs(page: Page, email: string, password: string) {
+  await page.goto('/login')
+  await page.getByLabel('Email').fill(email)
+  await page.getByLabel('Password').fill(password)
+  await page.getByRole('button', { name: /sign in/i }).click()
+  await page.waitForURL('/dashboard')
 }
 ```
 
-**TanStack Router** (for components that call `useNavigate`, `useParams`, etc.):
+### CRUD Flows
 
-```tsx
-import {
-  createMemoryHistory,
-  createRouter,
-  RouterProvider,
-} from '@tanstack/react-router'
-import { routeTree } from '#/routeTree.gen'
+```ts
+test('creates a campaign and shows it in the list', async ({ page }) => {
+  await loginAs(page, 'dm@saga.app', 'password123')
 
-function renderWithRouter(ui: React.ReactElement, { initialPath = '/' } = {}) {
-  const router = createRouter({
-    routeTree,
-    history: createMemoryHistory({ initialEntries: [initialPath] }),
-  })
-  return render(<RouterProvider router={router} />)
-}
+  await page.goto('/campaigns')
+  await page.getByRole('button', { name: /new campaign/i }).click()
+
+  await page.getByLabel('Campaign name').fill('The Forgotten Realm')
+  await page.getByRole('combobox', { name: /system/i }).selectOption('D&D 5e')
+  await page.getByRole('button', { name: /create/i }).click()
+
+  await expect(page.getByRole('heading', { name: 'The Forgotten Realm' })).toBeVisible()
+})
+
+test('deletes a campaign after confirmation', async ({ page }) => {
+  const campaign = await seedCampaign({ name: 'Disposable Campaign' })
+  await loginAs(page, 'dm@saga.app', 'password123')
+
+  await page.goto(`/campaigns/${campaign.id}`)
+  await page.getByRole('button', { name: /delete/i }).click()
+
+  // Confirm dialog
+  await page.getByRole('button', { name: /confirm delete/i }).click()
+
+  await expect(page).toHaveURL('/campaigns')
+  await expect(page.getByText('Disposable Campaign')).not.toBeVisible()
+})
 ```
 
-Compose them when a component needs both.
+### Form Validation
+
+```ts
+test('shows validation errors when required fields are empty', async ({ page }) => {
+  await loginAs(page, 'dm@saga.app', 'password123')
+  await page.goto('/campaigns/new')
+
+  await page.getByRole('button', { name: /create/i }).click()
+
+  await expect(page.getByText(/name is required/i)).toBeVisible()
+})
+```
+
+### Responsive Design
+
+```ts
+test('navigation collapses on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 })
+  await page.goto('/')
+
+  await expect(page.getByRole('navigation')).not.toBeVisible()
+  await expect(page.getByRole('button', { name: /menu/i })).toBeVisible()
+})
+```
 
 ---
 
-## Patterns by Code Type
+## Ad-hoc Browser Automation
 
-### Utility Functions
+For quick exploration, screenshots, UX checks, and tasks that don't belong in a formal spec file, use the playwright-skill runner. Scripts go to `/tmp` — no project clutter, auto-cleaned by the OS.
 
-Pure logic — no providers needed. Use `it.each()` for value-driven tests:
+**CRITICAL WORKFLOW — follow in order:**
 
-```ts
-import { describe, it, expect } from 'vitest'
-import { cn } from '#/lib/utils'
+### Step 1: Detect running dev servers
 
-describe('cn', () => {
-  it('merges class names', () => {
-    expect(cn('foo', 'bar')).toBe('foo bar')
-  })
-
-  it.each([
-    ['false', false],
-    ['undefined', undefined],
-    ['null', null],
-  ])('ignores %s values', (_label, falsy) => {
-    expect(cn('foo', falsy, 'bar')).toBe('foo bar')
-  })
-
-  it.each([
-    ['p-4', 'p-6', 'p-6'],
-    ['text-red-500', 'text-blue-700', 'text-blue-700'],
-  ])('resolves conflicting %s vs %s, keeping the last', (a, b, expected) => {
-    expect(cn(a, b)).toBe(expected)
-  })
-})
+```bash
+SKILL_DIR=$(find ~/.claude/plugins/cache/playwright-skill -name "run.js" | head -1 | xargs dirname)
+cd $SKILL_DIR && node -e "require('./lib/helpers').detectDevServers().then(s => console.log(JSON.stringify(s)))"
 ```
 
-### React Components
+- **1 server found** → use it automatically, inform the user
+- **Multiple servers** → ask which one
+- **None found** → ask for URL or offer to start the dev server
 
-Render → interact → assert. Use the `name` option in `getByRole` to target elements precisely. Prefer `toBeVisible()` and `toHaveAccessibleName()` over weaker alternatives:
+### Step 2: Write the script to /tmp
 
-```tsx
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { describe, it, expect } from 'vitest'
-import ThemeToggle from '#/components/ThemeToggle'
+Apply the same KCD principles here — use semantic locators, assert on what users observe:
 
-describe('ThemeToggle', () => {
-  it('shows auto mode by default', () => {
-    render(<ThemeToggle />)
-    expect(
-      screen.getByRole('button', { name: /theme mode: auto/i }),
-    ).toBeVisible()
-  })
+```javascript
+// /tmp/playwright-test-login.js
+const { chromium } = require('playwright')
+const helpers = require('./lib/helpers')
 
-  it('cycles through modes on click', async () => {
-    const user = userEvent.setup()
-    render(<ThemeToggle />)
+const TARGET_URL = 'http://localhost:3000'
 
-    await user.click(screen.getByRole('button', { name: /theme mode: auto/i }))
-    expect(
-      screen.getByRole('button', { name: /theme mode: light/i }),
-    ).toBeVisible()
+;(async () => {
+  const browser = await chromium.launch({ headless: false })
+  const context = await helpers.createContext(browser)
+  const page = await context.newPage()
 
-    await user.click(screen.getByRole('button', { name: /theme mode: light/i }))
-    expect(
-      screen.getByRole('button', { name: /theme mode: dark/i }),
-    ).toBeVisible()
+  await page.goto(`${TARGET_URL}/login`)
 
-    await user.click(screen.getByRole('button', { name: /theme mode: dark/i }))
-    expect(
-      screen.getByRole('button', { name: /theme mode: auto/i }),
-    ).toBeVisible()
-  })
-})
+  await page.getByLabel('Email').fill('user@example.com')
+  await page.getByLabel('Password').fill('password123')
+  await page.getByRole('button', { name: /sign in/i }).click()
+
+  await page.waitForURL('**/dashboard')
+  console.log('✅ Login successful — redirected to dashboard')
+
+  await browser.close()
+})()
 ```
 
-### Forms (TanStack Form + Zod)
+### Step 3: Execute
 
-Test submission, validation errors, and field interactions — not the form's internal field state:
-
-```tsx
-it('shows validation error when email is empty', async () => {
-  const user = userEvent.setup()
-  renderWithQuery(<MyForm />)
-
-  await user.click(screen.getByRole('button', { name: /submit/i }))
-
-  expect(await screen.findByText(/email is required/i)).toBeVisible()
-})
+```bash
+cd $SKILL_DIR && node run.js /tmp/playwright-test-login.js
 ```
 
-### Data-Fetching Components (TanStack Query)
+### Common Ad-hoc Patterns
 
-Mock at the network level with `vi.fn()` on the query function, or use `msw` for full integration:
+**Screenshot:**
 
-```tsx
-import { vi } from 'vitest'
+```javascript
+// /tmp/playwright-test-screenshot.js
+const { chromium } = require('playwright')
 
-vi.mock('#/lib/api', () => ({
-  fetchUser: vi
-    .fn()
-    .mockResolvedValue({ name: 'Alice', email: 'alice@example.com' }),
-}))
+const TARGET_URL = 'http://localhost:3000'
 
-it('displays user data after loading', async () => {
-  renderWithQuery(<UserProfile userId="1" />)
-
-  expect(screen.getByText(/loading/i)).toBeVisible()
-  expect(await screen.findByText('Alice')).toBeVisible()
-})
+;(async () => {
+  const browser = await chromium.launch({ headless: false })
+  const page = await browser.newPage()
+  try {
+    await page.goto(TARGET_URL, { waitUntil: 'networkidle', timeout: 10000 })
+    await page.screenshot({ path: '/tmp/screenshot.png', fullPage: true })
+    console.log('📸 Screenshot saved to /tmp/screenshot.png')
+  } catch (error) {
+    console.error('❌ Error:', error.message)
+  } finally {
+    await browser.close()
+  }
+})()
 ```
+
+**Responsive check:**
+
+```javascript
+// /tmp/playwright-test-responsive.js
+const { chromium } = require('playwright')
+
+const TARGET_URL = 'http://localhost:3000'
+
+;(async () => {
+  const browser = await chromium.launch({ headless: false })
+  const page = await browser.newPage()
+
+  for (const viewport of [
+    { name: 'Desktop', width: 1920, height: 1080 },
+    { name: 'Tablet', width: 768, height: 1024 },
+    { name: 'Mobile', width: 375, height: 667 },
+  ]) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height })
+    await page.goto(TARGET_URL)
+    await page.screenshot({ path: `/tmp/${viewport.name.toLowerCase()}.png`, fullPage: true })
+    console.log(`✅ ${viewport.name} screenshot saved`)
+  }
+
+  await browser.close()
+})()
+```
+
+**Broken link check:**
+
+```javascript
+// /tmp/playwright-test-links.js
+const { chromium } = require('playwright')
+
+;(async () => {
+  const browser = await chromium.launch({ headless: false })
+  const page = await browser.newPage()
+  await page.goto('http://localhost:3000')
+
+  const links = await page.locator('a[href^="http"]').all()
+  const broken = []
+
+  for (const link of links) {
+    const href = await link.getAttribute('href')
+    try {
+      const response = await page.request.head(href)
+      if (!response.ok()) broken.push({ url: href, status: response.status() })
+    } catch (e) {
+      broken.push({ url: href, error: e.message })
+    }
+  }
+
+  console.log(`✅ Working: ${links.length - broken.length}`)
+  console.log(`❌ Broken:`, broken)
+  await browser.close()
+})()
+```
+
+### Inline Execution (Quick One-offs)
+
+```bash
+cd $SKILL_DIR && node run.js "
+const browser = await chromium.launch({ headless: false })
+const page = await browser.newPage()
+await page.goto('http://localhost:3000')
+await page.screenshot({ path: '/tmp/quick-screenshot.png', fullPage: true })
+console.log('Screenshot saved')
+await browser.close()
+"
+```
+
+### Setup (First Time)
+
+```bash
+cd $SKILL_DIR && npm run setup
+```
+
+Installs Playwright and Chromium for the skill runner. Only needed once.
+
+### Available Helpers
+
+```javascript
+const helpers = require('./lib/helpers')
+
+const servers = await helpers.detectDevServers()          // Detect running dev servers
+await helpers.safeClick(page, locator, { retries: 3 })   // Click with retry
+await helpers.safeType(page, locator, 'text')             // Type with clear
+await helpers.takeScreenshot(page, 'label')               // Timestamped screenshot
+await helpers.handleCookieBanner(page)                    // Dismiss cookie banners
+const data = await helpers.extractTableData(page, 'table') // Table → JS object
+const context = await helpers.createContext(browser)      // Context with custom headers
+```
+
+### Custom HTTP Headers
+
+```bash
+PW_HEADER_NAME=X-Automated-By PW_HEADER_VALUE=playwright \
+  cd $SKILL_DIR && node run.js /tmp/my-script.js
+
+PW_EXTRA_HEADERS='{"X-Automated-By":"playwright","X-Debug":"true"}' \
+  cd $SKILL_DIR && node run.js /tmp/my-script.js
+```
+
+### Tips
+
+- **Detect servers FIRST** — run `detectDevServers()` before writing test code for localhost
+- **Write to `/tmp`** — never to the project or skill directory
+- **Parameterize URLs** — `TARGET_URL` constant at the top of every script
+- **Visible browser by default** — `headless: false` unless user explicitly asks otherwise
+- **Wait strategies** — `waitForURL`, `waitForSelector`, `waitForLoadState` over fixed timeouts
+- **SlowMo** — use `slowMo: 100` when you want actions visible and easy to follow
 
 ---
 
 ## What Not to Do
 
-- No `wrapper.state()`, no `instance()`, no internal state assertions
-- No `fireEvent` — always `userEvent`
-- No `getByTestId` unless there's truly no semantic alternative
-- No shallow rendering
-- No `toBeInTheDocument()` — use `toBeVisible()` instead
-- No `toHaveAttribute('aria-label', ...)` when `toHaveAccessibleName()` or `getByRole({ name })` applies
-- No `toHaveTextContent()` when the `name` option in `getByRole` achieves the same thing
-- No per-test `beforeEach` for browser API mocks (localStorage, matchMedia) — put these in `src/test/setup.ts`
+- No Vitest, no jsdom, no `@testing-library/react`, no `userEvent` — Playwright only
+- No CSS selectors in tests — always `getByRole`, `getByLabel`, `getByText`, etc.
+- No network mocks — use a real database seeded with exactly what the test needs
+- No shared global seed state — each test seeds its own data in `beforeEach`
+- No assertions on internal state, CSS classes, or DOM structure
+- No `getByTestId` unless there is truly no semantic alternative
 - No comments in test files
 
 ---
 
 ## Output Requirements
 
-- Co-locate test files with source (same directory)
+- Spec files go in `tests/`, organized by feature domain
+- Shared helpers go in `tests/helpers/`
 - No comments anywhere in the output
-- `describe` blocks named after the module/component
-- `it` descriptions read as plain sentences from the user's perspective
-- All `userEvent` calls awaited
-- Use `it.each()` when 3+ tests share identical structure
+- `test.describe` blocks named after the feature or flow
+- `test` descriptions read as plain sentences from the user's perspective
+- All locators use Playwright's semantic API (`getByRole`, `getByLabel`, etc.)
+- Every test seeds its own data and calls `clearDatabase()` in `beforeEach`
 - Cover: happy path, error states, edge cases, and accessibility where relevant
