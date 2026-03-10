@@ -17,12 +17,6 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
-  test: {
-    passWithNoTests: true,
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test/setup.ts'],
-  },
 })
 
 export default config
