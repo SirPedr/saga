@@ -102,7 +102,9 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
                   style={{
                     background: 'var(--vellum-2)',
                     borderColor: 'var(--line)',
-                    color: field.state.value ? 'var(--ink)' : 'var(--ink-faint)',
+                    color: field.state.value
+                      ? 'var(--ink)'
+                      : 'var(--ink-faint)',
                   }}
                 >
                   <SelectValue placeholder="Select a system" />

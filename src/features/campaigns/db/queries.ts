@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { db } from '#/shared/db/client'
-import { campaigns, systems  } from './schema'
-import type {NewCampaign} from './schema';
+import { campaigns, systems } from './schema'
+import type { NewCampaign } from './schema'
 
 export async function listCampaigns() {
   return db
