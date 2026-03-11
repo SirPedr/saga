@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { config } from 'dotenv';
+
+config({ path: '.env.test' });
 
 export default defineConfig({
   testDir: './tests',
@@ -8,8 +11,15 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   globalSetup: './tests/global-setup.ts',
+  webServer: {
+    command: 'pnpm dev --port 3001',
+    url: 'http://localhost:3001',
+    reuseExistingServer: false,
+    timeout: 60_000,
+    env: process.env as Record<string, string>,
+  },
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3001',
     headless: !!process.env.CI,
     video: 'on-first-retry',
     screenshot: 'only-on-failure',
