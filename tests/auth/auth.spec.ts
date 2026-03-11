@@ -1,25 +1,5 @@
-import { test, expect, type Page } from '@playwright/test'
-import { createTestUser, cleanAuth, TEST_USER } from '../helpers/auth'
-
-/**
- * Fill the login form and submit.
- * Waits for client-side hydration by checking that the Nav's auth state
- * has resolved (the "Sign in" link appears only after useSession() runs).
- */
-async function login(
-  page: Page,
-  email: string = TEST_USER.email,
-  password: string = TEST_USER.password
-) {
-  await page.goto('/login')
-  // The Nav shows a "Sign in" link only after authClient.useSession() resolves
-  // (client-side only). This proves React hydration is complete.
-  await page.locator('header').getByRole('link', { name: 'Sign in' }).waitFor()
-
-  await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill(password)
-  await page.getByRole('button', { name: 'Sign in' }).click()
-}
+import { test, expect } from '@playwright/test'
+import { createTestUser, cleanAuth, login, TEST_USER } from '../helpers/auth'
 
 test.describe('Authentication', () => {
   test.beforeEach(async () => {

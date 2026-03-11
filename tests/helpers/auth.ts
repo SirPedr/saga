@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import {
@@ -43,6 +44,24 @@ export async function createTestUser(
   }
 
   return response.json()
+}
+
+/**
+ * Fill the login form and submit.
+ * Waits for client-side hydration by checking that the Nav's auth state
+ * has resolved (the "Sign in" link appears only after useSession() runs).
+ */
+export async function login(
+  page: Page,
+  email: string = TEST_USER.email,
+  password: string = TEST_USER.password
+) {
+  await page.goto('/login')
+  await page.locator('header').getByRole('link', { name: 'Sign in' }).waitFor()
+
+  await page.getByLabel('Email').fill(email)
+  await page.getByLabel('Password').fill(password)
+  await page.getByRole('button', { name: 'Sign in' }).click()
 }
 
 /**

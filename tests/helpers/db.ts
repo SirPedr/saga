@@ -33,3 +33,7 @@ export async function seedCampaign(fields: {
 export async function cleanCampaigns() {
   await db.delete(campaigns)
 }
+
+export async function cleanSystems() {
+  await db.delete(systems)
+}
