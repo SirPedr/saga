@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { createTestUser, cleanAuth, login } from '../helpers/auth'
-import { seedSystem, seedCampaign, cleanCampaigns, cleanSystems } from '../helpers/db'
+import {
+  seedSystem,
+  seedCampaign,
+  cleanCampaigns,
+  cleanSystems,
+} from '../helpers/db'
 import { buildSystem, buildCampaign } from '../helpers/factories'
 
 test.describe('Campaign List', () => {
@@ -24,10 +29,10 @@ test.describe('Campaign List', () => {
     await expect(page).toHaveURL(/\/campaigns/)
 
     await expect(
-      page.getByRole('heading', { name: /no campaigns yet/i })
+      page.getByRole('heading', { name: /no campaigns yet/i }),
     ).toBeVisible()
     await expect(
-      page.getByRole('button', { name: /create your first campaign/i })
+      page.getByRole('button', { name: /create your first campaign/i }),
     ).toBeVisible()
     await expect(page.getByRole('article')).toHaveCount(0)
   })
@@ -38,10 +43,10 @@ test.describe('Campaign List', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign1 = await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
     const campaign2 = await seedCampaign(
-      buildCampaign({ title: 'Lost Mine of Phandelver', systemId: system.id })
+      buildCampaign({ title: 'Lost Mine of Phandelver', systemId: system.id }),
     )
 
     await login(page)
@@ -49,10 +54,10 @@ test.describe('Campaign List', () => {
 
     await expect(page.getByRole('article')).toHaveCount(2)
     await expect(
-      page.getByRole('heading', { name: campaign1.title })
+      page.getByRole('heading', { name: campaign1.title }),
     ).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: campaign2.title })
+      page.getByRole('heading', { name: campaign2.title }),
     ).toBeVisible()
     await expect(page.getByText('D&D 5e').first()).toBeVisible()
   })
@@ -67,14 +72,14 @@ test.describe('Campaign List', () => {
         title: 'Curse of Strahd',
         systemId: system.id,
         description: 'A gothic horror adventure in Barovia',
-      })
+      }),
     )
 
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
 
     await expect(
-      page.getByText('A gothic horror adventure in Barovia')
+      page.getByText('A gothic horror adventure in Barovia'),
     ).toBeVisible()
   })
 
@@ -84,19 +89,19 @@ test.describe('Campaign List', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
 
     await expect(
-      page.getByRole('heading', { name: 'Curse of Strahd' })
+      page.getByRole('heading', { name: 'Curse of Strahd' }),
     ).toBeVisible()
     const card = page.getByRole('article')
     await expect(card).toHaveCount(1)
     await expect(
-      card.locator('p').filter({ hasText: /\S/ }).first()
+      card.locator('p').filter({ hasText: /\S/ }).first(),
     ).toHaveText(/Created/)
   })
 })
@@ -126,7 +131,7 @@ test.describe('Create Campaign', () => {
 
     await page.getByRole('button', { name: /new campaign/i }).click()
     await expect(
-      page.getByRole('heading', { name: /new campaign/i })
+      page.getByRole('heading', { name: /new campaign/i }),
     ).toBeVisible()
 
     await page.getByLabel('Title').fill('Curse of Strahd')
@@ -137,7 +142,7 @@ test.describe('Create Campaign', () => {
     await page.getByRole('button', { name: /create campaign/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: 'Curse of Strahd' })
+      page.getByRole('heading', { name: 'Curse of Strahd' }),
     ).toBeVisible()
     await expect(page.getByText('D&D 5e')).toBeVisible()
     await expect(page.getByText('A gothic horror adventure')).toBeVisible()
@@ -160,7 +165,7 @@ test.describe('Create Campaign', () => {
     await page.getByRole('button', { name: /create campaign/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: 'Curse of Strahd' })
+      page.getByRole('heading', { name: 'Curse of Strahd' }),
     ).toBeVisible()
   })
 
@@ -194,9 +199,7 @@ test.describe('Create Campaign', () => {
     await page.getByLabel('Title').fill('a'.repeat(101))
     await page.getByLabel(/description/i).click()
 
-    await expect(
-      page.getByText(/too big|at most 100|<=100/i)
-    ).toBeVisible()
+    await expect(page.getByText(/too big|at most 100|<=100/i)).toBeVisible()
   })
 
   test('should dismiss dialog without creating a campaign when Escape is pressed', async ({
@@ -207,16 +210,16 @@ test.describe('Create Campaign', () => {
 
     await page.getByRole('button', { name: /new campaign/i }).click()
     await expect(
-      page.getByRole('heading', { name: /new campaign/i })
+      page.getByRole('heading', { name: /new campaign/i }),
     ).toBeVisible()
 
     await page.keyboard.press('Escape')
 
     await expect(
-      page.getByRole('heading', { name: /new campaign/i })
+      page.getByRole('heading', { name: /new campaign/i }),
     ).not.toBeVisible()
     await expect(
-      page.getByRole('heading', { name: /no campaigns yet/i })
+      page.getByRole('heading', { name: /no campaigns yet/i }),
     ).toBeVisible()
   })
 
@@ -229,7 +232,7 @@ test.describe('Create Campaign', () => {
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
     await expect(
-      page.getByRole('heading', { name: /no campaigns yet/i })
+      page.getByRole('heading', { name: /no campaigns yet/i }),
     ).toBeVisible()
 
     await page.getByRole('button', { name: /new campaign/i }).click()
@@ -239,10 +242,10 @@ test.describe('Create Campaign', () => {
     await page.getByRole('button', { name: /create campaign/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: /no campaigns yet/i })
+      page.getByRole('heading', { name: /no campaigns yet/i }),
     ).not.toBeVisible()
     await expect(
-      page.getByRole('heading', { name: 'Curse of Strahd' })
+      page.getByRole('heading', { name: 'Curse of Strahd' }),
     ).toBeVisible()
   })
 })
@@ -267,25 +270,25 @@ test.describe('Delete Campaign', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign = await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
     await expect(
-      page.getByRole('heading', { name: campaign.title })
+      page.getByRole('heading', { name: campaign.title }),
     ).toBeVisible()
 
     await page.getByRole('button', { name: /delete campaign/i }).click()
     await expect(
-      page.getByRole('heading', { name: /are you sure/i })
+      page.getByRole('heading', { name: /are you sure/i }),
     ).toBeVisible()
     await expect(page.getByText(`\u201C${campaign.title}\u201D`)).toBeVisible()
 
     await page.getByRole('button', { name: /^delete$/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: campaign.title })
+      page.getByRole('heading', { name: campaign.title }),
     ).not.toBeVisible()
   })
 
@@ -293,7 +296,7 @@ test.describe('Delete Campaign', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign = await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
@@ -301,16 +304,16 @@ test.describe('Delete Campaign', () => {
 
     await page.getByRole('button', { name: /delete campaign/i }).click()
     await expect(
-      page.getByRole('heading', { name: /are you sure/i })
+      page.getByRole('heading', { name: /are you sure/i }),
     ).toBeVisible()
 
     await page.getByRole('button', { name: /cancel/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: /are you sure/i })
+      page.getByRole('heading', { name: /are you sure/i }),
     ).not.toBeVisible()
     await expect(
-      page.getByRole('heading', { name: campaign.title })
+      page.getByRole('heading', { name: campaign.title }),
     ).toBeVisible()
   })
 
@@ -320,7 +323,7 @@ test.describe('Delete Campaign', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
@@ -330,7 +333,7 @@ test.describe('Delete Campaign', () => {
     await page.getByRole('button', { name: /^delete$/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: /no campaigns yet/i })
+      page.getByRole('heading', { name: /no campaigns yet/i }),
     ).toBeVisible()
   })
 
@@ -340,13 +343,13 @@ test.describe('Delete Campaign', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
     await seedCampaign(
       buildCampaign({
         title: 'Lost Mine of Phandelver',
         systemId: system.id,
-      })
+      }),
     )
 
     await login(page)
@@ -362,7 +365,7 @@ test.describe('Delete Campaign', () => {
 
     await expect(page.getByRole('article')).toHaveCount(1)
     await expect(
-      page.getByRole('heading', { name: 'Lost Mine of Phandelver' })
+      page.getByRole('heading', { name: 'Lost Mine of Phandelver' }),
     ).toBeVisible()
   })
 })
@@ -387,19 +390,18 @@ test.describe('Navigation', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign = await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
 
-    await page
-      .getByRole('article')
-      .filter({ hasText: campaign.title })
-      .click()
+    await page.getByRole('article').filter({ hasText: campaign.title }).click()
 
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaign.id}`))
-    await expect(page.getByText(campaign.id)).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: campaign.title, level: 1 }),
+    ).toBeVisible()
   })
 
   test('should load detail page when navigated to directly', async ({
@@ -408,14 +410,16 @@ test.describe('Navigation', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign = await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
 
     await page.goto(`/campaigns/${campaign.id}`)
-    await expect(page.getByText(campaign.id)).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: campaign.title, level: 1 }),
+    ).toBeVisible()
   })
 
   test('should return to campaign list when navigating back from detail', async ({
@@ -424,22 +428,150 @@ test.describe('Navigation', () => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign = await seedCampaign(
-      buildCampaign({ title: 'Curse of Strahd', systemId: system.id })
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
     )
 
     await login(page)
     await expect(page).toHaveURL(/\/campaigns/)
 
-    await page
-      .getByRole('article')
-      .filter({ hasText: campaign.title })
-      .click()
+    await page.getByRole('article').filter({ hasText: campaign.title }).click()
     await expect(page).toHaveURL(new RegExp(`/campaigns/${campaign.id}`))
 
     await page.goBack()
     await expect(page).toHaveURL(/\/campaigns\/?$/)
     await expect(
-      page.getByRole('heading', { name: campaign.title })
+      page.getByRole('heading', { name: campaign.title }),
+    ).toBeVisible()
+  })
+})
+
+test.describe('Campaign Detail Layout', () => {
+  test.beforeEach(async () => {
+    await cleanCampaigns()
+    await cleanSystems()
+    await cleanAuth()
+    await createTestUser()
+  })
+
+  test.afterAll(async () => {
+    await cleanCampaigns()
+    await cleanSystems()
+    await cleanAuth()
+  })
+
+  test('should display campaign title and system badge', async ({ page }) => {
+    const systemData = buildSystem({ name: 'Pathfinder 2e', slug: 'pf2e' })
+    const system = await seedSystem(systemData.name, systemData.slug)
+    const campaign = await seedCampaign(
+      buildCampaign({ title: 'Tomb of Annihilation', systemId: system.id }),
+    )
+
+    await login(page)
+    await expect(page).toHaveURL(/\/campaigns/)
+    await page.goto(`/campaigns/${campaign.id}`)
+
+    await expect(
+      page.getByRole('heading', { name: 'Tomb of Annihilation', level: 1 }),
+    ).toBeVisible()
+    await expect(page.getByText('Pathfinder 2e')).toBeVisible()
+  })
+
+  test('should display description when campaign has one', async ({
+    page,
+  }) => {
+    const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
+    const system = await seedSystem(systemData.name, systemData.slug)
+    const campaign = await seedCampaign(
+      buildCampaign({
+        title: 'Curse of Strahd',
+        systemId: system.id,
+        description: 'A gothic horror adventure in Barovia',
+      }),
+    )
+
+    await login(page)
+    await expect(page).toHaveURL(/\/campaigns/)
+    await page.goto(`/campaigns/${campaign.id}`)
+
+    await expect(
+      page.getByText('A gothic horror adventure in Barovia'),
+    ).toBeVisible()
+  })
+
+  test('should not display description when campaign has none', async ({
+    page,
+  }) => {
+    const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
+    const system = await seedSystem(systemData.name, systemData.slug)
+    const campaign = await seedCampaign(
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
+    )
+
+    await login(page)
+    await expect(page).toHaveURL(/\/campaigns/)
+    await page.goto(`/campaigns/${campaign.id}`)
+
+    await expect(
+      page.getByRole('heading', { name: 'Curse of Strahd', level: 1 }),
+    ).toBeVisible()
+
+    await expect(
+      page.getByTestId('campaign-description'),
+    ).toHaveCount(0)
+  })
+
+  test('should display all seven sub-navigation tabs as links', async ({
+    page,
+  }) => {
+    const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
+    const system = await seedSystem(systemData.name, systemData.slug)
+    const campaign = await seedCampaign(
+      buildCampaign({ title: 'Curse of Strahd', systemId: system.id }),
+    )
+
+    await login(page)
+    await expect(page).toHaveURL(/\/campaigns/)
+    await page.goto(`/campaigns/${campaign.id}`)
+
+    await expect(
+      page.getByRole('heading', { name: 'Curse of Strahd', level: 1 }),
+    ).toBeVisible()
+
+    const subNav = page.locator('nav', { has: page.getByRole('link', { name: 'Sessions' }) })
+    await expect(subNav.getByRole('link')).toHaveCount(7)
+
+    const expectedTabs = [
+      { label: 'Sessions', path: 'sessions' },
+      { label: 'NPCs', path: 'npcs' },
+      { label: 'Factions', path: 'factions' },
+      { label: 'Characters', path: 'characters' },
+      { label: 'Graph', path: 'graph' },
+      { label: 'World Events', path: 'world-events' },
+      { label: 'Documents', path: 'documents' },
+    ]
+
+    for (const tab of expectedTabs) {
+      const link = subNav.getByRole('link', { name: tab.label })
+      await expect(link).toBeVisible()
+      await expect(link).toHaveAttribute(
+        'href',
+        new RegExp(`/campaigns/${campaign.id}/${tab.path}`),
+      )
+    }
+  })
+
+  test('should show not-found message when campaign does not exist', async ({
+    page,
+  }) => {
+    await login(page)
+    await expect(page).toHaveURL(/\/campaigns/)
+    await page.goto('/campaigns/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11')
+
+    await expect(
+      page.getByRole('heading', { name: /campaign not found/i }),
+    ).toBeVisible()
+    await expect(
+      page.getByText(/doesn.t exist|has been deleted/i),
     ).toBeVisible()
   })
 })
@@ -455,10 +587,7 @@ test.describe('Auth Guard', () => {
 
   const protectedPaths = [
     ['/campaigns', 'campaign list'],
-    [
-      '/campaigns/00000000-0000-0000-0000-000000000000',
-      'campaign detail',
-    ],
+    ['/campaigns/00000000-0000-0000-0000-000000000000', 'campaign detail'],
   ] as const
 
   for (const [path, label] of protectedPaths) {
