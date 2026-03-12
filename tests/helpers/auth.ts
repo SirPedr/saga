@@ -25,7 +25,7 @@ export const TEST_USER = {
  * The test server must be running when this is called.
  */
 export async function createTestUser(
-  overrides?: Partial<{ name: string; email: string; password: string }>
+  overrides?: Partial<{ name: string; email: string; password: string }>,
 ) {
   const userData = { ...TEST_USER, ...overrides }
 
@@ -54,7 +54,7 @@ export async function createTestUser(
 export async function login(
   page: Page,
   email: string = TEST_USER.email,
-  password: string = TEST_USER.password
+  password: string = TEST_USER.password,
 ) {
   await page.goto('/login')
   await page.locator('header').getByRole('link', { name: 'Sign in' }).waitFor()

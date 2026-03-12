@@ -35,13 +35,13 @@ Key tenets:
 
 ## Stack
 
-| Concern | Tool |
-|---|---|
-| Test runner | Playwright (`@playwright/test`) |
-| Browser | Chromium (headless in CI, visible locally) |
-| Database | Real PostgreSQL — same schema as production, cleared between tests |
-| DB access in tests | Drizzle ORM (direct queries for seeding and teardown) |
-| Ad-hoc automation | playwright-skill runner (scripts to `/tmp`) |
+| Concern            | Tool                                                               |
+| ------------------ | ------------------------------------------------------------------ |
+| Test runner        | Playwright (`@playwright/test`)                                    |
+| Browser            | Chromium (headless in CI, visible locally)                         |
+| Database           | Real PostgreSQL — same schema as production, cleared between tests |
+| DB access in tests | Drizzle ORM (direct queries for seeding and teardown)              |
+| Ad-hoc automation  | playwright-skill runner (scripts to `/tmp`)                        |
 
 There is no Vitest, no jsdom, no `@testing-library/react`, no `userEvent`. Everything comes from Playwright's API.
 
@@ -63,7 +63,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: false,          // avoid DB conflicts; enable per-worker isolation if needed
+  fullyParallel: false, // avoid DB conflicts; enable per-worker isolation if needed
   retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: 'http://localhost:3000',
@@ -72,9 +72,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   globalSetup: './tests/global-setup.ts',
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 })
 ```
 
@@ -145,7 +143,9 @@ import * as campaignSchema from '#/features/campaigns/db/schema'
 import * as sessionSchema from '#/features/sessions/db/schema'
 
 const client = postgres(process.env.TEST_DATABASE_URL!)
-export const testDb = drizzle(client, { schema: { ...campaignSchema, ...sessionSchema } })
+export const testDb = drizzle(client, {
+  schema: { ...campaignSchema, ...sessionSchema },
+})
 
 export async function clearDatabase() {
   // Delete in reverse dependency order
@@ -154,12 +154,17 @@ export async function clearDatabase() {
   // ... other tables
 }
 
-export async function seedCampaign(overrides?: Partial<typeof campaignSchema.campaigns.$inferInsert>) {
-  const [campaign] = await testDb.insert(campaignSchema.campaigns).values({
-    name: 'Test Campaign',
-    system: 'D&D 5e',
-    ...overrides,
-  }).returning()
+export async function seedCampaign(
+  overrides?: Partial<typeof campaignSchema.campaigns.$inferInsert>,
+) {
+  const [campaign] = await testDb
+    .insert(campaignSchema.campaigns)
+    .values({
+      name: 'Test Campaign',
+      system: 'D&D 5e',
+      ...overrides,
+    })
+    .returning()
   return campaign
 }
 ```
@@ -179,7 +184,9 @@ test('shows campaign in the list', async ({ page }) => {
 
   await page.goto('/campaigns')
 
-  await expect(page.getByRole('heading', { name: 'The Forgotten Realm' })).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'The Forgotten Realm' }),
+  ).toBeVisible()
 })
 ```
 
@@ -215,15 +222,16 @@ await page.getByRole('combobox', { name: /system/i }).selectOption('D&D 5e')
 await page.click('button[type="submit"]')
 await page.fill('input[name="campaignName"]', 'The Forgotten Realm')
 await page.locator('.campaign-card').first().click()
+await page.locator('p[style*="ink-soft"]').first()
 ```
 
-CSS selectors test structure. Semantic locators test what the user sees. When the markup changes but the button still says "Create campaign", the semantic test survives; the CSS selector breaks.
+CSS selectors test structure, not behavior. This includes **CSS attribute selectors** targeting `style`, `class`, or any presentation attribute (e.g. `[style*="..."]`, `[class*="..."]`). These are just as brittle as class selectors — they break when styling changes even though the user-facing behavior is identical. Semantic locators test what the user sees. When the markup changes but the button still says "Create campaign", the semantic test survives; the CSS selector breaks. If no semantic locator fits, prefer `getByTestId` over any CSS selector.
 
 The `name` option in `getByRole` is simultaneously a selector and an assertion — targeting the element by its accessible name means you've already verified what it says:
 
 ```ts
-page.getByRole('button', { name: /sign in/i })         // finds AND verifies label
-page.getByRole('heading', { name: /your campaigns/i })  // finds AND verifies heading text
+page.getByRole('button', { name: /sign in/i }) // finds AND verifies label
+page.getByRole('heading', { name: /your campaigns/i }) // finds AND verifies heading text
 ```
 
 ---
@@ -249,7 +257,9 @@ await expect(page).toHaveURL(/\/campaigns\/\d+/)
 **For form values:**
 
 ```ts
-await expect(page.getByLabel('Campaign name')).toHaveValue('The Forgotten Realm')
+await expect(page.getByLabel('Campaign name')).toHaveValue(
+  'The Forgotten Realm',
+)
 ```
 
 **For absence:**
@@ -289,7 +299,9 @@ test('redirects to dashboard after login', async ({ page }) => {
   await page.getByRole('button', { name: /sign in/i }).click()
 
   await expect(page).toHaveURL('/dashboard')
-  await expect(page.getByRole('heading', { name: /your campaigns/i })).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: /your campaigns/i }),
+  ).toBeVisible()
 })
 
 test('shows error on invalid credentials', async ({ page }) => {
@@ -330,7 +342,9 @@ test('creates a campaign and shows it in the list', async ({ page }) => {
   await page.getByRole('combobox', { name: /system/i }).selectOption('D&D 5e')
   await page.getByRole('button', { name: /create/i }).click()
 
-  await expect(page.getByRole('heading', { name: 'The Forgotten Realm' })).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'The Forgotten Realm' }),
+  ).toBeVisible()
 })
 
 test('deletes a campaign after confirmation', async ({ page }) => {
@@ -351,7 +365,9 @@ test('deletes a campaign after confirmation', async ({ page }) => {
 ### Form Validation
 
 ```ts
-test('shows validation errors when required fields are empty', async ({ page }) => {
+test('shows validation errors when required fields are empty', async ({
+  page,
+}) => {
   await loginAs(page, 'dm@saga.app', 'password123')
   await page.goto('/campaigns/new')
 
@@ -469,9 +485,15 @@ const TARGET_URL = 'http://localhost:3000'
     { name: 'Tablet', width: 768, height: 1024 },
     { name: 'Mobile', width: 375, height: 667 },
   ]) {
-    await page.setViewportSize({ width: viewport.width, height: viewport.height })
+    await page.setViewportSize({
+      width: viewport.width,
+      height: viewport.height,
+    })
     await page.goto(TARGET_URL)
-    await page.screenshot({ path: `/tmp/${viewport.name.toLowerCase()}.png`, fullPage: true })
+    await page.screenshot({
+      path: `/tmp/${viewport.name.toLowerCase()}.png`,
+      fullPage: true,
+    })
     console.log(`✅ ${viewport.name} screenshot saved`)
   }
 
@@ -535,13 +557,13 @@ Installs Playwright and Chromium for the skill runner. Only needed once.
 ```javascript
 const helpers = require('./lib/helpers')
 
-const servers = await helpers.detectDevServers()          // Detect running dev servers
-await helpers.safeClick(page, locator, { retries: 3 })   // Click with retry
-await helpers.safeType(page, locator, 'text')             // Type with clear
-await helpers.takeScreenshot(page, 'label')               // Timestamped screenshot
-await helpers.handleCookieBanner(page)                    // Dismiss cookie banners
+const servers = await helpers.detectDevServers() // Detect running dev servers
+await helpers.safeClick(page, locator, { retries: 3 }) // Click with retry
+await helpers.safeType(page, locator, 'text') // Type with clear
+await helpers.takeScreenshot(page, 'label') // Timestamped screenshot
+await helpers.handleCookieBanner(page) // Dismiss cookie banners
 const data = await helpers.extractTableData(page, 'table') // Table → JS object
-const context = await helpers.createContext(browser)      // Context with custom headers
+const context = await helpers.createContext(browser) // Context with custom headers
 ```
 
 ### Custom HTTP Headers

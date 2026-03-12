@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 
 export function buildSystem(
-  overrides: Partial<{ name: string; slug: string }> = {}
+  overrides: Partial<{ name: string; slug: string }> = {},
 ) {
   const name = overrides.name ?? faker.word.noun() + ' RPG'
   return {
@@ -15,7 +15,7 @@ export function buildCampaign(
     title: string
     systemId: string
     description: string
-  }> = {}
+  }> = {},
 ) {
   return {
     title: overrides.title ?? faker.lorem.words(3),

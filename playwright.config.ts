@@ -1,7 +1,7 @@
-import { defineConfig, devices } from '@playwright/test';
-import { config } from 'dotenv';
+import { defineConfig, devices } from '@playwright/test'
+import { config } from 'dotenv'
 
-config({ path: '.env.test' });
+config({ path: '.env.test' })
 
 export default defineConfig({
   testDir: './tests',
@@ -31,4 +31,4 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-});
+})
