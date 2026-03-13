@@ -432,3 +432,20 @@ a {
     color: var(--foreground);
   }
 }
+
+/* ── TipTap editor ─────────────────────────────────────────────────────────── */
+
+.tiptap {
+  outline: none;
+  min-height: 120px;
+  padding: 1rem 1.25rem;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--ink-faint);
+  font-style: italic;
+  pointer-events: none;
+  height: 0;
+}
