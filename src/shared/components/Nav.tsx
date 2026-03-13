@@ -1,4 +1,5 @@
 import { Link, useRouter } from '@tanstack/react-router'
+import { Button } from '#/components/ui/button'
 import { authClient } from '#/features/auth/server/auth-client'
 
 export function Nav() {
@@ -49,12 +50,14 @@ export function Nav() {
               <span className="hidden text-xs text-(--ink-soft) sm:block">
                 {session.user.email}
               </span>
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => void handleSignOut()}
-                className="h-8 border border-(--line) bg-(--vellum-3) px-3 text-xs font-semibold text-(--ink-soft) transition hover:border-(--amber) hover:text-(--ink)"
+                className="h-8 border-border text-xs font-semibold hover:border-primary"
               >
                 Sign out
-              </button>
+              </Button>
             </>
           )}
           {!isPending && !session?.user && (

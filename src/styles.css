@@ -35,6 +35,13 @@
   --surface: rgba(227, 217, 196, 0.75);
   --surface-strong: rgba(217, 206, 188, 0.9);
   --inset-glint: rgba(255, 255, 255, 0.6);
+  --badge-system-bg: rgba(168, 122, 34, 0.15);
+  --badge-system-border: rgba(168, 122, 34, 0.3);
+  --selection-bg: rgba(168, 122, 34, 0.22);
+  --cta-amber-border: rgba(168, 122, 34, 0.35);
+  --cta-amber-bg: rgba(168, 122, 34, 0.1);
+  --cta-amber-bg-hover: rgba(168, 122, 34, 0.2);
+  --cta-ghost-bg: rgba(255, 255, 255, 0.06);
 
   /* shadcn semantic tokens */
   --background: #ede7d4;
@@ -105,6 +112,13 @@
   --surface: rgba(26, 22, 15, 0.8);
   --surface-strong: rgba(19, 16, 9, 0.92);
   --inset-glint: rgba(255, 240, 200, 0.02);
+  --badge-system-bg: rgba(190, 142, 54, 0.15);
+  --badge-system-border: rgba(190, 142, 54, 0.3);
+  --selection-bg: rgba(190, 142, 54, 0.22);
+  --cta-amber-border: rgba(190, 142, 54, 0.35);
+  --cta-amber-bg: rgba(190, 142, 54, 0.1);
+  --cta-amber-bg-hover: rgba(190, 142, 54, 0.2);
+  --cta-ghost-bg: rgba(255, 255, 255, 0.06);
 
   /* shadcn semantic tokens */
   --background: #0d0b08;
@@ -337,6 +351,13 @@ a {
     color 180ms ease,
     border-color 180ms ease,
     transform 180ms ease;
+}
+
+/* System badge chip */
+.system-badge {
+  background: var(--badge-system-bg);
+  color: var(--amber);
+  border: 1px solid var(--badge-system-border);
 }
 
 /* Arcane annotation kicker — uppercase label style */

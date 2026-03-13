@@ -63,7 +63,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(212,163,72,0.22)]">
+      <body className="font-sans antialiased wrap-anywhere selection:bg-(--selection-bg)">
         <TanStackQueryProvider>
           <Layout>
             <Nav />

@@ -312,6 +312,7 @@ pnpm dlx shadcn@latest add button input label card dialog
 ```
 
 The only exceptions to this rule are:
+
 - **Semantic HTML structure elements** (`<form>`, `<nav>`, `<main>`, `<section>`, `<header>`, `<footer>`, `<fieldset>`, `<legend>`) — these have no shadcn equivalents and are required for accessibility.
 - **Headings** (`<h1>`–`<h6>`) and **paragraphs** (`<p>`) — plain text elements with no interactive behavior.
 - **Layout elements** (`<div>`, `<span>`) — used for grouping and styling, not as interactive primitives.

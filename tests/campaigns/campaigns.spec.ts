@@ -476,9 +476,7 @@ test.describe('Campaign Detail Layout', () => {
     await expect(page.getByText('Pathfinder 2e')).toBeVisible()
   })
 
-  test('should display description when campaign has one', async ({
-    page,
-  }) => {
+  test('should display description when campaign has one', async ({ page }) => {
     const systemData = buildSystem({ name: 'D&D 5e', slug: 'dnd5e' })
     const system = await seedSystem(systemData.name, systemData.slug)
     const campaign = await seedCampaign(
@@ -515,9 +513,7 @@ test.describe('Campaign Detail Layout', () => {
       page.getByRole('heading', { name: 'Curse of Strahd', level: 1 }),
     ).toBeVisible()
 
-    await expect(
-      page.getByTestId('campaign-description'),
-    ).toHaveCount(0)
+    await expect(page.getByTestId('campaign-description')).toHaveCount(0)
   })
 
   test('should display all seven sub-navigation tabs as links', async ({
@@ -537,7 +533,9 @@ test.describe('Campaign Detail Layout', () => {
       page.getByRole('heading', { name: 'Curse of Strahd', level: 1 }),
     ).toBeVisible()
 
-    const subNav = page.locator('nav', { has: page.getByRole('link', { name: 'Sessions' }) })
+    const subNav = page.locator('nav', {
+      has: page.getByRole('link', { name: 'Sessions' }),
+    })
     await expect(subNav.getByRole('link')).toHaveCount(7)
 
     const expectedTabs = [

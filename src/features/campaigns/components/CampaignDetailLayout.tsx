@@ -23,29 +23,13 @@ export function CampaignDetailLayout() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div
-        className="border-b px-6 pb-0 pt-6"
-        style={{
-          background: 'var(--vellum-2)',
-          borderColor: 'var(--line)',
-        }}
-      >
+      <div className="border-b border-border bg-muted px-6 pb-0 pt-6">
         <div className="page-wrap flex flex-col gap-3">
           <div className="flex items-start justify-between gap-4">
-            <h1
-              className="text-2xl font-semibold leading-tight sm:text-3xl"
-              style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)' }}
-            >
+            <h1 className="font-display text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
               {campaign.title}
             </h1>
-            <span
-              className="mt-1 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-widest"
-              style={{
-                background: 'rgba(212,163,72,0.15)',
-                color: 'var(--amber)',
-                border: '1px solid rgba(212,163,72,0.3)',
-              }}
-            >
+            <span className="system-badge mt-1 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-widest">
               {campaign.systemName}
             </span>
           </div>
@@ -53,8 +37,7 @@ export function CampaignDetailLayout() {
           {campaign.description && (
             <p
               data-testid="campaign-description"
-              className="max-w-2xl text-sm leading-relaxed"
-              style={{ color: 'var(--ink-soft)' }}
+              className="max-w-2xl text-sm leading-relaxed text-muted-foreground"
             >
               {campaign.description}
             </p>
@@ -66,15 +49,10 @@ export function CampaignDetailLayout() {
                 key={tab.to}
                 to={tab.to}
                 params={{ campaignId }}
-                className="whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors"
-                style={{ color: 'var(--ink-faint)' }}
+                className="whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-xs font-bold uppercase tracking-widest text-(--ink-faint) transition-colors"
                 activeProps={{
                   className:
-                    'whitespace-nowrap border-b-2 px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors',
-                  style: {
-                    color: 'var(--amber)',
-                    borderColor: 'var(--amber)',
-                  },
+                    'whitespace-nowrap border-b-2 border-primary px-3 py-2 text-xs font-bold uppercase tracking-widest text-primary transition-colors',
                 }}
               >
                 {tab.label}

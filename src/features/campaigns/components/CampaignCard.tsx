@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '#/components/ui/alert-dialog'
+import { Button } from '#/components/ui/button'
 import { deleteCampaign } from '#/features/campaigns/server/index'
 import type { Campaign } from '../db/schema'
 
@@ -51,99 +53,60 @@ export function CampaignCard({ campaign }: { campaign: CampaignWithSystem }) {
         params={{ campaignId: campaign.id }}
         className="group block"
       >
-        <article
-          className="relative flex h-full flex-col gap-3 rounded-lg border p-5 transition-all duration-200"
-          style={{
-            background: 'var(--vellum-3)',
-            borderColor: 'var(--line)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-          }}
-        >
-          <button
-            type="button"
+        <article className="relative flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-all duration-200">
+          <Button
+            variant="ghost"
+            size="icon-xs"
             aria-label="Delete campaign"
             onClick={handleDeleteClick}
             disabled={isDeleting}
-            className="absolute right-3 top-3 rounded p-1 opacity-40 transition-opacity hover:opacity-100 focus-visible:opacity-100"
-            style={{ color: 'var(--crimson)' }}
+            className="absolute right-3 top-3 text-destructive opacity-40 transition-opacity hover:opacity-100 focus-visible:opacity-100"
           >
             <Trash2 size={14} />
-          </button>
+          </Button>
 
           <div className="flex items-start justify-between gap-3 pr-6">
-            <h2
-              className="font-display text-lg font-semibold leading-snug transition-colors"
-              style={{ color: 'var(--ink)', fontFamily: 'Fraunces, serif' }}
-            >
+            <h2 className="font-display text-lg font-semibold leading-snug text-foreground transition-colors">
               {campaign.title}
             </h2>
-            <span
-              className="shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-widest"
-              style={{
-                background: 'rgba(212,163,72,0.15)',
-                color: 'var(--amber)',
-                border: '1px solid rgba(212,163,72,0.3)',
-              }}
-            >
+            <span className="system-badge shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-widest">
               {campaign.systemName}
             </span>
           </div>
 
           {campaign.description && (
-            <p
-              className="line-clamp-2 text-sm leading-relaxed"
-              style={{ color: 'var(--ink-soft)' }}
-            >
+            <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
               {campaign.description}
             </p>
           )}
 
-          <p
-            className="mt-auto text-xs"
-            style={{
-              color: 'var(--ink-faint)',
-              fontFamily: 'Manrope, sans-serif',
-            }}
-          >
+          <p className="mt-auto font-sans text-xs text-(--ink-faint)">
             Created {formattedDate}
           </p>
         </article>
       </Link>
 
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialogContent
-          style={{
-            background: 'var(--vellum-2)',
-            borderColor: 'var(--line)',
-          }}
-        >
+        <AlertDialogContent className="bg-popover border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle
-              style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)' }}
-            >
+            <AlertDialogTitle className="font-display text-foreground">
               Are you sure?
             </AlertDialogTitle>
-            <AlertDialogDescription style={{ color: 'var(--ink-soft)' }}>
+            <AlertDialogDescription>
               Delete &ldquo;{campaign.title}&rdquo;? This action cannot be
               undone. All sessions, NPCs, and world events associated with this
               campaign will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel
-              style={{ borderColor: 'var(--line)', color: 'var(--ink)' }}
-            >
-              Cancel
-            </AlertDialogCancel>
-            <button
-              type="button"
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
               onClick={handleConfirmDelete}
               disabled={isDeleting}
-              className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white transition-colors disabled:pointer-events-none disabled:opacity-50"
-              style={{ background: 'var(--crimson)' }}
             >
-              {isDeleting ? 'Deleting…' : 'Delete'}
-            </button>
+              {isDeleting ? 'Deleting\u2026' : 'Delete'}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -4,13 +4,19 @@ export const Route = createFileRoute('/')({ component: HomePage })
 
 function HomePage() {
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
+    <section
+      aria-labelledby="home-heading"
+      className="page-wrap px-4 pb-8 pt-14"
+    >
       {/* Hero */}
       <section className="island-shell rise-in relative overflow-hidden px-6 py-10 sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 bg-[radial-gradient(circle,rgba(190,142,54,0.14),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 bg-[radial-gradient(circle,rgba(62,98,120,0.10),transparent_66%)]" />
+        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 bg-[radial-gradient(circle,var(--hero-a),transparent_66%)]" />
+        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 bg-[radial-gradient(circle,var(--hero-b),transparent_66%)]" />
         <p className="island-kicker mb-3">Campaign planning, reimagined</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-(--ink) sm:text-6xl">
+        <h1
+          id="home-heading"
+          className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-(--ink) sm:text-6xl"
+        >
           Your world. Every thread, remembered.
         </h1>
         <p className="mb-8 max-w-2xl text-base text-(--ink-soft) sm:text-lg">
@@ -21,13 +27,13 @@ function HomePage() {
         <div className="flex flex-wrap gap-3">
           <a
             href="/campaigns"
-            className="border border-[rgba(190,142,54,0.35)] bg-[rgba(190,142,54,0.10)] px-5 py-2.5 text-sm font-semibold text-(--amber) no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(190,142,54,0.20)]"
+            className="border border-(--cta-amber-border) bg-(--cta-amber-bg) px-5 py-2.5 text-sm font-semibold text-(--amber) no-underline transition hover:-translate-y-0.5 hover:bg-(--cta-amber-bg-hover)"
           >
             Open Campaigns
           </a>
           <a
             href="/login"
-            className="border border-(--line) bg-[rgba(255,255,255,0.06)] px-5 py-2.5 text-sm font-semibold text-(--ink-soft) no-underline transition hover:-translate-y-0.5 hover:border-(--amber) hover:text-(--ink)"
+            className="border border-(--line) bg-(--cta-ghost-bg) px-5 py-2.5 text-sm font-semibold text-(--ink-soft) no-underline transition hover:-translate-y-0.5 hover:border-(--amber) hover:text-(--ink)"
           >
             Sign In
           </a>
@@ -79,6 +85,6 @@ function HomePage() {
           to see the planning tools in action.
         </p>
       </section>
-    </main>
+    </section>
   )
 }

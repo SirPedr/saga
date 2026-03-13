@@ -55,11 +55,12 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
     >
       <form.Field name="title">
         {(field) => {
+          const errorId = `${field.name}-error`
           const hasError =
             field.state.meta.isTouched && field.state.meta.errors.length > 0
           return (
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor={field.name} style={{ color: 'var(--ink)' }}>
+              <Label htmlFor={field.name} className="text-foreground">
                 Title
               </Label>
               <Input
@@ -68,14 +69,16 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
                 placeholder="The Lost Mines of Phandelver"
-                style={{
-                  background: 'var(--vellum-2)',
-                  borderColor: 'var(--line)',
-                  color: 'var(--ink)',
-                }}
+                className="bg-popover border-border text-foreground"
+                aria-invalid={hasError}
+                aria-errormessage={hasError ? errorId : undefined}
               />
               {hasError && (
-                <p className="text-sm" style={{ color: 'var(--crimson)' }}>
+                <p
+                  id={errorId}
+                  role="alert"
+                  className="text-sm text-destructive"
+                >
                   {field.state.meta.errors[0]?.message}
                 </p>
               )}
@@ -86,11 +89,12 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
 
       <form.Field name="systemId">
         {(field) => {
+          const errorId = `${field.name}-error`
           const hasError =
             field.state.meta.isTouched && field.state.meta.errors.length > 0
           return (
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor={field.name} style={{ color: 'var(--ink)' }}>
+              <Label htmlFor={field.name} className="text-foreground">
                 System
               </Label>
               <Select
@@ -99,22 +103,13 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
               >
                 <SelectTrigger
                   id={field.name}
-                  style={{
-                    background: 'var(--vellum-2)',
-                    borderColor: 'var(--line)',
-                    color: field.state.value
-                      ? 'var(--ink)'
-                      : 'var(--ink-faint)',
-                  }}
+                  className="bg-popover border-border text-foreground data-placeholder:text-(--ink-faint)"
+                  aria-invalid={hasError}
+                  aria-errormessage={hasError ? errorId : undefined}
                 >
                   <SelectValue placeholder="Select a system" />
                 </SelectTrigger>
-                <SelectContent
-                  style={{
-                    background: 'var(--vellum-2)',
-                    borderColor: 'var(--line)',
-                  }}
-                >
+                <SelectContent>
                   {systems.map((system) => (
                     <SelectItem key={system.id} value={system.id}>
                       {system.name}
@@ -123,7 +118,11 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
                 </SelectContent>
               </Select>
               {hasError && (
-                <p className="text-sm" style={{ color: 'var(--crimson)' }}>
+                <p
+                  id={errorId}
+                  role="alert"
+                  className="text-sm text-destructive"
+                >
                   {field.state.meta.errors[0]?.message}
                 </p>
               )}
@@ -135,22 +134,17 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
       <form.Field name="description">
         {(field) => (
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor={field.name} style={{ color: 'var(--ink)' }}>
-              Description{' '}
-              <span style={{ color: 'var(--ink-faint)' }}>(optional)</span>
+            <Label htmlFor={field.name} className="text-foreground">
+              Description <span className="text-(--ink-faint)">(optional)</span>
             </Label>
             <Textarea
               id={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
-              placeholder="A short description of your campaign…"
+              placeholder="A short description of your campaign\u2026"
               rows={3}
-              style={{
-                background: 'var(--vellum-2)',
-                borderColor: 'var(--line)',
-                color: 'var(--ink)',
-              }}
+              className="bg-popover border-border text-foreground"
             />
           </div>
         )}
@@ -159,14 +153,9 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
       <Button
         type="submit"
         disabled={form.state.isSubmitting}
-        className="mt-1 self-end"
-        style={{
-          background: 'var(--amber)',
-          color: '#0f0d0a',
-          fontWeight: 700,
-        }}
+        className="mt-1 self-end font-bold"
       >
-        {form.state.isSubmitting ? 'Creating…' : 'Create Campaign'}
+        {form.state.isSubmitting ? 'Creating\u2026' : 'Create Campaign'}
       </Button>
     </form>
   )

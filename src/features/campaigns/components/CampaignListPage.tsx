@@ -16,55 +16,38 @@ export function CampaignListPage() {
   const { data: campaigns = [] } = useQuery(campaignListQueryOptions())
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
+    <section
+      aria-labelledby="campaigns-heading"
+      className="mx-auto max-w-6xl px-6 py-10"
+    >
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1
-            className="text-3xl font-semibold"
-            style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)' }}
+            id="campaigns-heading"
+            className="font-display text-3xl font-semibold text-foreground"
           >
             Campaigns
           </h1>
-          <p className="mt-1 text-sm" style={{ color: 'var(--ink-soft)' }}>
+          <p className="mt-1 text-sm text-muted-foreground">
             Your ongoing and archived campaigns
           </p>
         </div>
 
-        <Button
-          onClick={() => setOpen(true)}
-          style={{
-            background: 'var(--amber)',
-            color: '#0f0d0a',
-            fontWeight: 700,
-          }}
-        >
+        <Button onClick={() => setOpen(true)} className="font-bold">
           New Campaign
         </Button>
       </div>
 
       {campaigns.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-24 text-center">
-          <h2
-            className="text-2xl font-semibold"
-            style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)' }}
-          >
+          <h2 className="font-display text-2xl font-semibold text-foreground">
             No campaigns yet
           </h2>
-          <p
-            className="max-w-sm text-sm leading-relaxed"
-            style={{ color: 'var(--ink-soft)' }}
-          >
+          <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
             Every great adventure starts somewhere. Create your first campaign
             and begin building your world.
           </p>
-          <Button
-            onClick={() => setOpen(true)}
-            style={{
-              background: 'var(--amber)',
-              color: '#0f0d0a',
-              fontWeight: 700,
-            }}
-          >
+          <Button onClick={() => setOpen(true)} className="font-bold">
             Create your first campaign
           </Button>
         </div>
@@ -77,22 +60,15 @@ export function CampaignListPage() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          style={{
-            background: 'var(--vellum-2)',
-            borderColor: 'var(--line)',
-          }}
-        >
+        <DialogContent className="bg-popover border-border">
           <DialogHeader>
-            <DialogTitle
-              style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)' }}
-            >
+            <DialogTitle className="font-display text-foreground">
               New Campaign
             </DialogTitle>
           </DialogHeader>
           <CampaignForm onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
-    </main>
+    </section>
   )
 }

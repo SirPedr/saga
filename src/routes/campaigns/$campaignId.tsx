@@ -12,11 +12,8 @@ export const Route = createFileRoute('/campaigns/$campaignId')({
   },
   component: CampaignDetailLayout,
   notFoundComponent: () => (
-    <div className="p-8 text-center" style={{ color: 'var(--ink-soft)' }}>
-      <h2
-        className="text-2xl font-semibold"
-        style={{ fontFamily: 'Fraunces, serif', color: 'var(--ink)' }}
-      >
+    <div className="p-8 text-center text-muted-foreground">
+      <h2 className="font-display text-2xl font-semibold text-foreground">
         Campaign not found
       </h2>
       <p className="mt-2">
