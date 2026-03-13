@@ -15,6 +15,13 @@
       "when": 1772920348327,
       "tag": "0001_ambiguous_firebird",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773438483847,
+      "tag": "0002_glorious_thunderball",
+      "breakpoints": true
     }
   ]
 }
