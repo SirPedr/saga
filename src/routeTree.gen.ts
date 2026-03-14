@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CampaignsIndexRouteImport } from './routes/campaigns/index'
 import { Route as CampaignsCampaignIdRouteImport } from './routes/campaigns/$campaignId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as CampaignsCampaignIdSessionsIndexRouteImport } from './routes/campaigns/$campaignId/sessions/index'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -46,30 +47,39 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaignsCampaignIdSessionsIndexRoute =
+  CampaignsCampaignIdSessionsIndexRouteImport.update({
+    id: '/sessions/',
+    path: '/sessions/',
+    getParentRoute: () => CampaignsCampaignIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/campaigns': typeof CampaignsRouteWithChildren
   '/login': typeof LoginRoute
-  '/campaigns/$campaignId': typeof CampaignsCampaignIdRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdRouteWithChildren
   '/campaigns/': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/campaigns/$campaignId/sessions/': typeof CampaignsCampaignIdSessionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/campaigns/$campaignId': typeof CampaignsCampaignIdRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdRouteWithChildren
   '/campaigns': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/campaigns/$campaignId/sessions': typeof CampaignsCampaignIdSessionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/campaigns': typeof CampaignsRouteWithChildren
   '/login': typeof LoginRoute
-  '/campaigns/$campaignId': typeof CampaignsCampaignIdRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdRouteWithChildren
   '/campaigns/': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/campaigns/$campaignId/sessions/': typeof CampaignsCampaignIdSessionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,8 +90,15 @@ export interface FileRouteTypes {
     | '/campaigns/$campaignId'
     | '/campaigns/'
     | '/api/auth/$'
+    | '/campaigns/$campaignId/sessions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/campaigns/$campaignId' | '/campaigns' | '/api/auth/$'
+  to:
+    | '/'
+    | '/login'
+    | '/campaigns/$campaignId'
+    | '/campaigns'
+    | '/api/auth/$'
+    | '/campaigns/$campaignId/sessions'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/campaigns/$campaignId'
     | '/campaigns/'
     | '/api/auth/$'
+    | '/campaigns/$campaignId/sessions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -143,16 +161,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campaigns/$campaignId/sessions/': {
+      id: '/campaigns/$campaignId/sessions/'
+      path: '/sessions'
+      fullPath: '/campaigns/$campaignId/sessions/'
+      preLoaderRoute: typeof CampaignsCampaignIdSessionsIndexRouteImport
+      parentRoute: typeof CampaignsCampaignIdRoute
+    }
   }
 }
 
+interface CampaignsCampaignIdRouteChildren {
+  CampaignsCampaignIdSessionsIndexRoute: typeof CampaignsCampaignIdSessionsIndexRoute
+}
+
+const CampaignsCampaignIdRouteChildren: CampaignsCampaignIdRouteChildren = {
+  CampaignsCampaignIdSessionsIndexRoute: CampaignsCampaignIdSessionsIndexRoute,
+}
+
+const CampaignsCampaignIdRouteWithChildren =
+  CampaignsCampaignIdRoute._addFileChildren(CampaignsCampaignIdRouteChildren)
+
 interface CampaignsRouteChildren {
-  CampaignsCampaignIdRoute: typeof CampaignsCampaignIdRoute
+  CampaignsCampaignIdRoute: typeof CampaignsCampaignIdRouteWithChildren
   CampaignsIndexRoute: typeof CampaignsIndexRoute
 }
 
 const CampaignsRouteChildren: CampaignsRouteChildren = {
-  CampaignsCampaignIdRoute: CampaignsCampaignIdRoute,
+  CampaignsCampaignIdRoute: CampaignsCampaignIdRouteWithChildren,
   CampaignsIndexRoute: CampaignsIndexRoute,
 }
 

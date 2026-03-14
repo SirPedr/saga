@@ -23,3 +23,22 @@ export function buildCampaign(
     description: overrides.description,
   }
 }
+
+export function buildSession(
+  overrides: Partial<{
+    campaignId: string
+    title: string
+    sessionNumber: number
+    status: 'planned' | 'completed'
+    sessionDate: string
+  }> = {},
+) {
+  return {
+    campaignId: overrides.campaignId ?? faker.string.uuid(),
+    title: overrides.title ?? faker.lorem.words(3),
+    sessionNumber:
+      overrides.sessionNumber ?? faker.number.int({ min: 1, max: 100 }),
+    status: overrides.status ?? ('planned' as const),
+    sessionDate: overrides.sessionDate,
+  }
+}

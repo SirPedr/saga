@@ -93,9 +93,7 @@ function Toolbar({ editor }: { editor: Editor }) {
       <Toggle
         size="sm"
         pressed={state.isBulletList}
-        onPressedChange={() =>
-          editor.chain().focus().toggleBulletList().run()
-        }
+        onPressedChange={() => editor.chain().focus().toggleBulletList().run()}
         aria-label="Bullet list"
         className={toolbarToggleClass}
       >
@@ -104,9 +102,7 @@ function Toolbar({ editor }: { editor: Editor }) {
       <Toggle
         size="sm"
         pressed={state.isOrderedList}
-        onPressedChange={() =>
-          editor.chain().focus().toggleOrderedList().run()
-        }
+        onPressedChange={() => editor.chain().focus().toggleOrderedList().run()}
         aria-label="Ordered list"
         className={toolbarToggleClass}
       >
