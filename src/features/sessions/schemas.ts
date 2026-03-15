@@ -10,4 +10,9 @@ export const SessionCreateSchema = z.object({
 
 export const SessionUpdateSchema = SessionCreateSchema.omit({
   campaignId: true,
-}).partial()
+})
+  .extend({
+    planningNotes: z.string().nullable().optional(),
+    outcomeNotes: z.string().nullable().optional(),
+  })
+  .partial()

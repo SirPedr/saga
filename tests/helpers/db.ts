@@ -40,6 +40,8 @@ export async function seedSession(fields: {
   sessionNumber: number
   status?: 'planned' | 'completed'
   sessionDate?: string
+  planningNotes?: string
+  outcomeNotes?: string
 }) {
   const [created] = await db
     .insert(sessions)
@@ -49,6 +51,8 @@ export async function seedSession(fields: {
       sessionNumber: fields.sessionNumber,
       status: fields.status ?? 'planned',
       sessionDate: fields.sessionDate,
+      planningNotes: fields.planningNotes,
+      outcomeNotes: fields.outcomeNotes,
     })
     .returning()
   return created

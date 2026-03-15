@@ -18,6 +18,7 @@ import { cn } from '#/lib/utils'
 interface RichTextEditorProps {
   value: string
   onChange: (html: string) => void
+  onBlur?: () => void
   placeholder?: string
   disabled?: boolean
 }
@@ -115,10 +116,12 @@ function Toolbar({ editor }: { editor: Editor }) {
 export function RichTextEditor({
   value,
   onChange,
+  onBlur,
   placeholder: placeholderText,
   disabled = false,
 }: RichTextEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({
@@ -129,6 +132,9 @@ export function RichTextEditor({
     editable: !disabled,
     onUpdate: ({ editor: updatedEditor }) => {
       onChange(updatedEditor.getHTML())
+    },
+    onBlur: () => {
+      onBlur?.()
     },
   })
 

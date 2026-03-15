@@ -16,6 +16,7 @@ import { Route as CampaignsIndexRouteImport } from './routes/campaigns/index'
 import { Route as CampaignsCampaignIdRouteImport } from './routes/campaigns/$campaignId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as CampaignsCampaignIdSessionsIndexRouteImport } from './routes/campaigns/$campaignId/sessions/index'
+import { Route as CampaignsCampaignIdSessionsSessionIdRouteImport } from './routes/campaigns/$campaignId/sessions/$sessionId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -53,6 +54,12 @@ const CampaignsCampaignIdSessionsIndexRoute =
     path: '/sessions/',
     getParentRoute: () => CampaignsCampaignIdRoute,
   } as any)
+const CampaignsCampaignIdSessionsSessionIdRoute =
+  CampaignsCampaignIdSessionsSessionIdRouteImport.update({
+    id: '/sessions/$sessionId',
+    path: '/sessions/$sessionId',
+    getParentRoute: () => CampaignsCampaignIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/campaigns/$campaignId': typeof CampaignsCampaignIdRouteWithChildren
   '/campaigns/': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/campaigns/$campaignId/sessions/$sessionId': typeof CampaignsCampaignIdSessionsSessionIdRoute
   '/campaigns/$campaignId/sessions/': typeof CampaignsCampaignIdSessionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +77,7 @@ export interface FileRoutesByTo {
   '/campaigns/$campaignId': typeof CampaignsCampaignIdRouteWithChildren
   '/campaigns': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/campaigns/$campaignId/sessions/$sessionId': typeof CampaignsCampaignIdSessionsSessionIdRoute
   '/campaigns/$campaignId/sessions': typeof CampaignsCampaignIdSessionsIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +88,7 @@ export interface FileRoutesById {
   '/campaigns/$campaignId': typeof CampaignsCampaignIdRouteWithChildren
   '/campaigns/': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/campaigns/$campaignId/sessions/$sessionId': typeof CampaignsCampaignIdSessionsSessionIdRoute
   '/campaigns/$campaignId/sessions/': typeof CampaignsCampaignIdSessionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
     | '/campaigns/$campaignId'
     | '/campaigns/'
     | '/api/auth/$'
+    | '/campaigns/$campaignId/sessions/$sessionId'
     | '/campaigns/$campaignId/sessions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
     | '/campaigns/$campaignId'
     | '/campaigns'
     | '/api/auth/$'
+    | '/campaigns/$campaignId/sessions/$sessionId'
     | '/campaigns/$campaignId/sessions'
   id:
     | '__root__'
@@ -107,6 +119,7 @@ export interface FileRouteTypes {
     | '/campaigns/$campaignId'
     | '/campaigns/'
     | '/api/auth/$'
+    | '/campaigns/$campaignId/sessions/$sessionId'
     | '/campaigns/$campaignId/sessions/'
   fileRoutesById: FileRoutesById
 }
@@ -168,14 +181,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CampaignsCampaignIdSessionsIndexRouteImport
       parentRoute: typeof CampaignsCampaignIdRoute
     }
+    '/campaigns/$campaignId/sessions/$sessionId': {
+      id: '/campaigns/$campaignId/sessions/$sessionId'
+      path: '/sessions/$sessionId'
+      fullPath: '/campaigns/$campaignId/sessions/$sessionId'
+      preLoaderRoute: typeof CampaignsCampaignIdSessionsSessionIdRouteImport
+      parentRoute: typeof CampaignsCampaignIdRoute
+    }
   }
 }
 
 interface CampaignsCampaignIdRouteChildren {
+  CampaignsCampaignIdSessionsSessionIdRoute: typeof CampaignsCampaignIdSessionsSessionIdRoute
   CampaignsCampaignIdSessionsIndexRoute: typeof CampaignsCampaignIdSessionsIndexRoute
 }
 
 const CampaignsCampaignIdRouteChildren: CampaignsCampaignIdRouteChildren = {
+  CampaignsCampaignIdSessionsSessionIdRoute:
+    CampaignsCampaignIdSessionsSessionIdRoute,
   CampaignsCampaignIdSessionsIndexRoute: CampaignsCampaignIdSessionsIndexRoute,
 }
 

@@ -25,8 +25,9 @@ async function loginAndGoToSessions(
 ) {
   await login(page)
   await expect(page).toHaveURL(/\/campaigns/)
-  await page.goto(`/campaigns/${campaignId}/sessions`)
-  await page.waitForURL(`**/campaigns/${campaignId}/sessions`)
+  await page.goto(`/campaigns/${campaignId}/sessions`, {
+    waitUntil: 'networkidle',
+  })
 }
 
 test.describe('Session List', () => {
