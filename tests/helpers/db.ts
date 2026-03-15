@@ -3,6 +3,7 @@ import { Pool } from 'pg'
 import { eq } from 'drizzle-orm'
 
 import { systems, campaigns } from '../../src/features/campaigns/db/schema'
+import { npcs, npcTemplates, npcAttributeValues } from '../../src/features/npcs/db/schema'
 import { sessions } from '../../src/features/sessions/db/schema'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
@@ -56,6 +57,33 @@ export async function seedSession(fields: {
     })
     .returning()
   return created
+}
+
+export async function seedNpc(fields: {
+  campaignId: string
+  name: string
+  portraitUrl?: string
+  tokenUrl?: string
+}) {
+  const [created] = await db
+    .insert(npcs)
+    .values({
+      campaignId: fields.campaignId,
+      name: fields.name,
+      portraitUrl: fields.portraitUrl,
+      tokenUrl: fields.tokenUrl,
+    })
+    .returning()
+  return created
+}
+
+export async function cleanNpcs() {
+  await db.delete(npcAttributeValues)
+  await db.delete(npcs)
+}
+
+export async function cleanNpcTemplates() {
+  await db.delete(npcTemplates)
 }
 
 export async function cleanSessions() {

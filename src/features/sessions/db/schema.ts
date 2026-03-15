@@ -8,6 +8,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core'
 import { campaigns } from '#/features/campaigns/db/schema'
+import { npcs } from '#/features/npcs/db/schema'
 
 export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -36,7 +37,9 @@ export const sessionNpcs = pgTable(
     sessionId: uuid('session_id')
       .notNull()
       .references(() => sessions.id, { onDelete: 'cascade' }),
-    npcId: uuid('npc_id').notNull(),
+    npcId: uuid('npc_id')
+      .notNull()
+      .references(() => npcs.id, { onDelete: 'cascade' }),
     role: text('role'),
   },
   (t) => [primaryKey({ columns: [t.sessionId, t.npcId] })],

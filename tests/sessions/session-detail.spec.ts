@@ -337,7 +337,7 @@ test.describe('Session Detail — Tabs', () => {
     await page.getByRole('tab', { name: 'Entities' }).click()
 
     await expect(
-      page.getByRole('heading', { name: 'Entities' }),
+      page.getByRole('heading', { name: 'Entities', exact: true }),
     ).toBeVisible()
     await expect(page.getByText('Coming soon')).toBeVisible()
   })
@@ -377,7 +377,7 @@ test.describe('Session Detail — Tabs', () => {
     await page.getByRole('tab', { name: 'Debrief' }).click()
 
     await expect(
-      page.getByRole('heading', { name: 'Debrief' }),
+      page.getByRole('heading', { name: 'Debrief', exact: true }),
     ).toBeVisible()
     await expect(page.getByText('Coming soon')).toBeVisible()
   })

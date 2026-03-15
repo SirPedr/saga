@@ -24,6 +24,22 @@ export function buildCampaign(
   }
 }
 
+export function buildNpc(
+  overrides: Partial<{
+    campaignId: string
+    name: string
+    portraitUrl: string
+    tokenUrl: string
+  }> = {},
+) {
+  return {
+    campaignId: overrides.campaignId ?? faker.string.uuid(),
+    name: overrides.name ?? faker.person.fullName(),
+    portraitUrl: overrides.portraitUrl,
+    tokenUrl: overrides.tokenUrl,
+  }
+}
+
 export function buildSession(
   overrides: Partial<{
     campaignId: string
