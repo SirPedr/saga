@@ -101,7 +101,9 @@ export type Npc = typeof npcs.$inferSelect
 export type NewNpc = typeof npcs.$inferInsert
 ```
 
-Always export `$inferSelect` and `$inferInsert` types alongside each table. Use `uuid().defaultRandom()` for PKs and timestamp defaults. Dynamic attribute tables use `text` for values.
+Always export `$inferSelect` and `$inferInsert` types alongside each table. Use `uuid().defaultRandom()` for PKs and timestamp defaults. Dynamic attribute tables use `text` for values. For `jsonb` columns, use `.$type<T>()` to give them a concrete TypeScript type (e.g., `jsonb('fields').$type<TemplateField[]>()`).
+
+Drizzle table definitions are the **single source of truth** for field names and types. Zod validation schemas in `schemas.ts` should be derived from these tables using `createInsertSchema` / `createUpdateSchema` from `drizzle-orm/zod`, with refinements for validation constraints (min/max, patterns). Do not manually redefine the same fields in both Drizzle and Zod.
 
 **Queries file** — reusable query helpers consumed by server functions:
 
@@ -174,20 +176,42 @@ Every server function must check the session before doing anything. Use `getWebR
 
 Define form/validation schemas in `features/<domain>/schemas.ts`. These are shared between server-side validation (the `.validator()` call) and client-side form validation.
 
+**Prefer deriving Zod schemas from Drizzle tables** using `createInsertSchema` / `createUpdateSchema` from `drizzle-orm/zod`. Only define manual Zod schemas for fields that don't map 1:1 to a DB column (e.g., `attributes` record that maps to a junction table, or JSONB structure validation like `TemplateFieldSchema`).
+
 ```ts
 // features/npcs/schemas.ts
+import { createInsertSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
+import { npcs } from './db/schema'
 
-export const createNpcSchema = z.object({
-  campaignId: z.uuid(),
-  name: z.string().min(1, 'Name is required'),
+// Derive from Drizzle table, add validation refinements
+const baseNpcSchema = createInsertSchema(npcs, {
+  name: (schema) => schema.min(1).max(100),
   portraitUrl: z.url().optional(),
+  tokenUrl: z.url().optional(),
 })
 
-export const updateNpcSchema = createNpcSchema.partial().extend({
-  id: z.uuid(),
+export const NpcCreateSchema = baseNpcSchema
+  .pick({
+    campaignId: true,
+    name: true,
+    portraitUrl: true,
+    tokenUrl: true,
+  })
+  .extend({
+    // Zod-only field — maps to a separate junction table, not a column on npcs
+    attributes: z.record(z.string(), z.string()).optional(),
+  })
+
+export const NpcUpdateSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  portraitUrl: z.url().nullable().optional(),
+  tokenUrl: z.url().nullable().optional(),
+  attributes: z.record(z.string(), z.string()).optional(),
 })
 ```
+
+Refinements can be **callbacks** `(schema) => schema.max(100)` (extends the existing schema) or **raw Zod schemas** like `z.url().optional()` (overwrites the field entirely, including nullability).
 
 **Zod v4 format validators** — this project uses Zod v4. String format validators are now first-class types, not `.string()` refinements. Use `z.uuid()` not `z.string().uuid()`, `z.url()` not `z.string().url()`, `z.email()` not `z.string().email()`. The `.string().uuid()` / `.string().url()` forms are deprecated in v4.
 
@@ -403,7 +427,7 @@ When adding a complete new feature domain:
 
 - [ ] `features/<domain>/db/schema.ts` — Drizzle tables with exported types
 - [ ] `features/<domain>/db/queries.ts` — reusable query functions
-- [ ] `features/<domain>/schemas.ts` — Zod schemas for forms/validation
+- [ ] `features/<domain>/schemas.ts` — Zod schemas derived from Drizzle tables via `drizzle-orm/zod`, plus manual schemas for form-only or JSONB fields
 - [ ] `features/<domain>/server/index.ts` — server functions (each with auth check)
 - [ ] `features/<domain>/server/queries.ts` — `queryOptions` wrappers
 - [ ] `features/<domain>/components/` — page and form components
