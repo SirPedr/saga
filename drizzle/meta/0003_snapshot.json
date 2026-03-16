@@ -110,12 +110,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -202,12 +198,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -217,9 +209,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -283,9 +273,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -408,12 +396,8 @@
           "name": "campaigns_system_id_systems_id_fk",
           "tableFrom": "campaigns",
           "tableTo": "systems",
-          "columnsFrom": [
-            "system_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["system_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -455,9 +439,7 @@
         "systems_slug_unique": {
           "name": "systems_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -494,12 +476,8 @@
           "name": "npc_attribute_values_npc_id_npcs_id_fk",
           "tableFrom": "npc_attribute_values",
           "tableTo": "npcs",
-          "columnsFrom": [
-            "npc_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["npc_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -507,10 +485,7 @@
       "compositePrimaryKeys": {
         "npc_attribute_values_npc_id_key_pk": {
           "name": "npc_attribute_values_npc_id_key_pk",
-          "columns": [
-            "npc_id",
-            "key"
-          ]
+          "columns": ["npc_id", "key"]
         }
       },
       "uniqueConstraints": {},
@@ -549,12 +524,8 @@
           "name": "npc_templates_campaign_id_campaigns_id_fk",
           "tableFrom": "npc_templates",
           "tableTo": "campaigns",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -564,9 +535,7 @@
         "npc_templates_campaign_id_unique": {
           "name": "npc_templates_campaign_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "campaign_id"
-          ]
+          "columns": ["campaign_id"]
         }
       },
       "policies": {},
@@ -629,12 +598,8 @@
           "name": "npcs_campaign_id_campaigns_id_fk",
           "tableFrom": "npcs",
           "tableTo": "campaigns",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -668,12 +633,8 @@
           "name": "session_factions_session_id_sessions_id_fk",
           "tableFrom": "session_factions",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -681,10 +642,7 @@
       "compositePrimaryKeys": {
         "session_factions_session_id_faction_id_pk": {
           "name": "session_factions_session_id_faction_id_pk",
-          "columns": [
-            "session_id",
-            "faction_id"
-          ]
+          "columns": ["session_id", "faction_id"]
         }
       },
       "uniqueConstraints": {},
@@ -721,12 +679,8 @@
           "name": "session_npcs_session_id_sessions_id_fk",
           "tableFrom": "session_npcs",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -734,12 +688,8 @@
           "name": "session_npcs_npc_id_npcs_id_fk",
           "tableFrom": "session_npcs",
           "tableTo": "npcs",
-          "columnsFrom": [
-            "npc_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["npc_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -747,10 +697,7 @@
       "compositePrimaryKeys": {
         "session_npcs_session_id_npc_id_pk": {
           "name": "session_npcs_session_id_npc_id_pk",
-          "columns": [
-            "session_id",
-            "npc_id"
-          ]
+          "columns": ["session_id", "npc_id"]
         }
       },
       "uniqueConstraints": {},
@@ -781,12 +728,8 @@
           "name": "session_playable_characters_session_id_sessions_id_fk",
           "tableFrom": "session_playable_characters",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -794,10 +737,7 @@
       "compositePrimaryKeys": {
         "session_playable_characters_session_id_playable_character_id_pk": {
           "name": "session_playable_characters_session_id_playable_character_id_pk",
-          "columns": [
-            "session_id",
-            "playable_character_id"
-          ]
+          "columns": ["session_id", "playable_character_id"]
         }
       },
       "uniqueConstraints": {},
@@ -886,12 +826,8 @@
           "name": "sessions_campaign_id_campaigns_id_fk",
           "tableFrom": "sessions",
           "tableTo": "campaigns",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

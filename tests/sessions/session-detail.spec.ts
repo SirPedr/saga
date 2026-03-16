@@ -27,9 +27,7 @@ async function loginAndGoToSessionDetail(
   await login(page)
   await expect(page).toHaveURL(/\/campaigns/)
   await page.goto(`/campaigns/${campaignId}/sessions/${sessionId}`)
-  await page.waitForURL(
-    `**/campaigns/${campaignId}/sessions/${sessionId}`,
-  )
+  await page.waitForURL(`**/campaigns/${campaignId}/sessions/${sessionId}`)
 }
 
 async function loginAndGoToSessions(
@@ -162,9 +160,7 @@ test.describe('Session Detail — Planning Notes', () => {
 
     await loginAndGoToSessionDetail(page, campaign.id, session.id)
 
-    await expect(
-      page.getByText('Attack the goblin camp at dawn'),
-    ).toBeVisible()
+    await expect(page.getByText('Attack the goblin camp at dawn')).toBeVisible()
   })
 
   test('should auto-save planning notes on blur', async ({ page }) => {
@@ -183,10 +179,14 @@ test.describe('Session Detail — Planning Notes', () => {
     await planningEditor.type('The party needs to cross the bridge')
 
     // Click outside to blur
-    await page.getByRole('heading', { name: 'Auto-save Test', level: 1 }).click()
+    await page
+      .getByRole('heading', { name: 'Auto-save Test', level: 1 })
+      .click()
 
     // Wait for save indicator
-    await expect(page.getByText('Saving\u2026').or(page.getByText('Saved'))).toBeVisible()
+    await expect(
+      page.getByText('Saving\u2026').or(page.getByText('Saved')),
+    ).toBeVisible()
 
     // Reload and verify persistence
     await page.reload()
@@ -226,7 +226,9 @@ test.describe('Session Detail — Outcome Notes', () => {
     await loginAndGoToSessionDetail(page, campaign.id, session.id)
 
     await expect(
-      page.getByText('Outcome notes unlock after the session is marked as completed'),
+      page.getByText(
+        'Outcome notes unlock after the session is marked as completed',
+      ),
     ).toBeVisible()
 
     // The outcome editor should have contenteditable="false"
@@ -270,16 +272,18 @@ test.describe('Session Detail — Outcome Notes', () => {
     await outcomeEditor.type('The party defeated the goblins')
 
     // Click outside to blur
-    await page.getByRole('heading', { name: 'Outcome Save Test', level: 1 }).click()
+    await page
+      .getByRole('heading', { name: 'Outcome Save Test', level: 1 })
+      .click()
 
     // Wait for save
-    await expect(page.getByText('Saving\u2026').or(page.getByText('Saved'))).toBeVisible()
+    await expect(
+      page.getByText('Saving\u2026').or(page.getByText('Saved')),
+    ).toBeVisible()
 
     // Reload and verify persistence
     await page.reload()
-    await expect(
-      page.getByText('The party defeated the goblins'),
-    ).toBeVisible()
+    await expect(page.getByText('The party defeated the goblins')).toBeVisible()
   })
 })
 
@@ -322,9 +326,7 @@ test.describe('Session Detail — Tabs', () => {
     ).toBeVisible()
   })
 
-  test('should show placeholder content for Entities tab', async ({
-    page,
-  }) => {
+  test('should show placeholder content for Entities tab', async ({ page }) => {
     const { campaign } = await setupCampaign()
     const session = await seedSession({
       campaignId: campaign.id,
@@ -342,9 +344,7 @@ test.describe('Session Detail — Tabs', () => {
     await expect(page.getByText('Coming soon')).toBeVisible()
   })
 
-  test('should show placeholder content for AI Chat tab', async ({
-    page,
-  }) => {
+  test('should show placeholder content for AI Chat tab', async ({ page }) => {
     const { campaign } = await setupCampaign()
     const session = await seedSession({
       campaignId: campaign.id,
@@ -356,15 +356,11 @@ test.describe('Session Detail — Tabs', () => {
 
     await page.getByRole('tab', { name: 'AI Chat' }).click()
 
-    await expect(
-      page.getByRole('heading', { name: 'AI Chat' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'AI Chat' })).toBeVisible()
     await expect(page.getByText('Coming soon')).toBeVisible()
   })
 
-  test('should show placeholder content for Debrief tab', async ({
-    page,
-  }) => {
+  test('should show placeholder content for Debrief tab', async ({ page }) => {
     const { campaign } = await setupCampaign()
     const session = await seedSession({
       campaignId: campaign.id,

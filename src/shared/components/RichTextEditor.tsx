@@ -140,7 +140,7 @@ export function RichTextEditor({
 
   // Sync external value changes into the editor
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- useEditor can return null during SSR/init
+     
     if (!editor) return
     if (editor.getHTML() !== value) {
       editor.commands.setContent(value, { emitUpdate: false })
@@ -149,7 +149,7 @@ export function RichTextEditor({
 
   // Sync disabled state
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- useEditor can return null during SSR/init
+     
     if (!editor) return
     editor.setEditable(!disabled)
   }, [editor, disabled])
