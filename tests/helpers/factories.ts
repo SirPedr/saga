@@ -40,6 +40,35 @@ export function buildNpc(
   }
 }
 
+export function buildTemplateField(
+  overrides: Partial<{
+    key: string
+    label: string
+    type: 'text' | 'number' | 'select'
+    required: boolean
+    options: string[]
+  }> = {},
+) {
+  const type = overrides.type ?? 'text'
+  const base = {
+    key: overrides.key ?? faker.lorem.word().toLowerCase().replace(/\s/g, '_'),
+    label: overrides.label ?? faker.lorem.word(),
+    type,
+    required: overrides.required ?? false,
+  }
+  if (type === 'select') {
+    return {
+      ...base,
+      options: overrides.options ?? [
+        faker.lorem.word(),
+        faker.lorem.word(),
+        faker.lorem.word(),
+      ],
+    }
+  }
+  return base
+}
+
 export function buildSession(
   overrides: Partial<{
     campaignId: string

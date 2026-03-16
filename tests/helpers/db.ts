@@ -82,6 +82,30 @@ export async function cleanNpcs() {
   await db.delete(npcs)
 }
 
+export async function seedNpcTemplate(
+  campaignId: string,
+  fields: unknown[] = [],
+) {
+  const [created] = await db
+    .insert(npcTemplates)
+    .values({ campaignId, fields })
+    .returning()
+  return created
+}
+
+export async function seedNpcAttributeValues(
+  npcId: string,
+  values: Record<string, string>,
+) {
+  const rows = Object.entries(values).map(([key, value]) => ({
+    npcId,
+    key,
+    value,
+  }))
+  if (rows.length === 0) return []
+  return db.insert(npcAttributeValues).values(rows).returning()
+}
+
 export async function cleanNpcTemplates() {
   await db.delete(npcTemplates)
 }
