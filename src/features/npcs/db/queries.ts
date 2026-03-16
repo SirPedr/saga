@@ -101,3 +101,8 @@ export async function updateNpc(id: string, input: Partial<NewNpc>) {
 export async function deleteNpc(id: string) {
   await db.delete(npcs).where(eq(npcs.id, id))
 }
+
+// Enriched query types
+export type NpcWithAttributes = NonNullable<
+  Awaited<ReturnType<typeof getNpcById>>
+>

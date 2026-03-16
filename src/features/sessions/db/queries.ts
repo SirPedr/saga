@@ -70,3 +70,8 @@ export async function updateSession(id: string, input: Partial<NewSession>) {
 export async function deleteSession(id: string) {
   await db.delete(sessions).where(eq(sessions.id, id))
 }
+
+// Enriched query types
+export type SessionWithRelations = NonNullable<
+  Awaited<ReturnType<typeof getSessionById>>
+>

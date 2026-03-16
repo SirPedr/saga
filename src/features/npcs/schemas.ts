@@ -1,4 +1,8 @@
+import { createInsertSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
+import { npcs, npcTemplates } from './db/schema'
+
+// --- Template field schema (manual — validates JSONB structure) ---
 
 const baseFields = {
   key: z
@@ -27,23 +31,41 @@ export const TemplateFieldSchema = z.discriminatedUnion('type', [
 
 export type TemplateField = z.infer<typeof TemplateFieldSchema>
 
-export const NpcTemplateUpdateSchema = z.object({
-  campaignId: z.uuid(),
-  fields: z.array(TemplateFieldSchema),
-})
+// --- NPC template schemas ---
+
+export const NpcTemplateUpdateSchema = createInsertSchema(npcTemplates)
+  .pick({
+    campaignId: true,
+  })
+  .extend({
+    fields: z.array(TemplateFieldSchema),
+  })
+
+// --- NPC attribute schemas (manual — maps to junction table) ---
 
 export const NpcAttributeValuesUpsertSchema = z.object({
   npcId: z.uuid(),
   values: z.record(z.string(), z.string()),
 })
 
-export const NpcCreateSchema = z.object({
-  campaignId: z.uuid(),
-  name: z.string().min(1).max(100),
+// --- NPC CRUD schemas ---
+
+const baseNpcSchema = createInsertSchema(npcs, {
+  name: (schema) => schema.min(1).max(100),
   portraitUrl: z.url().optional(),
   tokenUrl: z.url().optional(),
-  attributes: z.record(z.string(), z.string()).optional(),
 })
+
+export const NpcCreateSchema = baseNpcSchema
+  .pick({
+    campaignId: true,
+    name: true,
+    portraitUrl: true,
+    tokenUrl: true,
+  })
+  .extend({
+    attributes: z.record(z.string(), z.string()).optional(),
+  })
 
 export const NpcUpdateSchema = z.object({
   name: z.string().min(1).max(100).optional(),

@@ -1,18 +1,26 @@
-import { z } from 'zod'
+import { createInsertSchema } from 'drizzle-orm/zod'
+import { sessions } from './db/schema'
 
-export const SessionCreateSchema = z.object({
-  campaignId: z.uuid(),
-  title: z.string().min(1, 'Title is required').max(100),
-  sessionNumber: z.number().int().positive(),
-  sessionDate: z.string().optional(),
-  status: z.enum(['planned', 'completed']).default('planned'),
+const baseSessionSchema = createInsertSchema(sessions, {
+  title: (schema) => schema.min(1, 'Title is required').max(100),
+  sessionNumber: (schema) => schema.positive(),
 })
 
-export const SessionUpdateSchema = SessionCreateSchema.omit({
+export const SessionCreateSchema = baseSessionSchema.pick({
   campaignId: true,
+  title: true,
+  sessionNumber: true,
+  sessionDate: true,
+  status: true,
 })
-  .extend({
-    planningNotes: z.string().nullable().optional(),
-    outcomeNotes: z.string().nullable().optional(),
+
+export const SessionUpdateSchema = baseSessionSchema
+  .pick({
+    title: true,
+    sessionNumber: true,
+    sessionDate: true,
+    status: true,
+    planningNotes: true,
+    outcomeNotes: true,
   })
   .partial()

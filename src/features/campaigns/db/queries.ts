@@ -60,3 +60,8 @@ export async function deleteCampaign(id: string) {
 export async function listSystems() {
   return db.select().from(systems).orderBy(systems.name)
 }
+
+// Enriched query types — use these in components instead of manual extensions
+export type CampaignWithSystem = Awaited<
+  ReturnType<typeof listCampaigns>
+>[number]

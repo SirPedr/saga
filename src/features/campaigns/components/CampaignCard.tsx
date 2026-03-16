@@ -14,9 +14,7 @@ import {
 } from '#/components/ui/alert-dialog'
 import { Button } from '#/components/ui/button'
 import { deleteCampaign } from '#/features/campaigns/server/index'
-import type { Campaign } from '../db/schema'
-
-type CampaignWithSystem = Campaign & { systemName: string }
+import type { CampaignWithSystem } from '../db/queries'
 
 export function CampaignCard({ campaign }: { campaign: CampaignWithSystem }) {
   const [dialogOpen, setDialogOpen] = useState(false)

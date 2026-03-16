@@ -14,11 +14,10 @@ import {
 } from '#/components/ui/select'
 import { createCampaign } from '../server/index'
 import { systemListQueryOptions } from '../server/queries'
+import { CampaignCreateSchema } from '../schemas'
 
-// Form schema keeps description as string (empty string = no description)
-const campaignFormSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100),
-  systemId: z.uuid(),
+// Form schema: description is always a string (empty string = no description)
+const campaignFormSchema = CampaignCreateSchema.extend({
   description: z.string(),
 })
 

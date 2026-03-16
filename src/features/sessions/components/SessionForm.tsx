@@ -12,13 +12,15 @@ import {
   SelectValue,
 } from '#/components/ui/select'
 import { createSession } from '../server/index'
+import { SessionCreateSchema } from '../schemas'
 
-const sessionFormSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100),
-  sessionNumber: z.number().int().positive('Must be a positive number'),
-  sessionDate: z.string(),
-  status: z.enum(['planned', 'completed']),
-})
+// Form schema: sessionDate always a string, status always required (no default)
+const sessionFormSchema = SessionCreateSchema.omit({ campaignId: true }).extend(
+  {
+    sessionDate: z.string(),
+    status: z.enum(['planned', 'completed']),
+  },
+)
 
 export function SessionForm({
   campaignId,

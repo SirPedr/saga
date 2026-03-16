@@ -7,6 +7,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core'
 import { campaigns } from '#/features/campaigns/db/schema'
+import type { TemplateField } from '../schemas'
 
 export const npcs = pgTable('npcs', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -30,7 +31,7 @@ export const npcTemplates = pgTable('npc_templates', {
     .notNull()
     .unique()
     .references(() => campaigns.id, { onDelete: 'cascade' }),
-  fields: jsonb('fields').notNull().default([]),
+  fields: jsonb('fields').$type<TemplateField[]>().notNull().default([]),
 })
 
 export type NpcTemplate = typeof npcTemplates.$inferSelect

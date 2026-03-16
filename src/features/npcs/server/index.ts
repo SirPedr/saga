@@ -6,10 +6,8 @@ import {
   NpcTemplateUpdateSchema,
   NpcAttributeValuesUpsertSchema,
   NpcCreateSchema,
-  NpcUpdateSchema
-  
+  NpcUpdateSchema,
 } from '../schemas'
-import type {TemplateField} from '../schemas';
 import {
   getOrCreateTemplate,
   getTemplateForCampaign,
@@ -68,7 +66,7 @@ async function validateRequiredAttributes(
   const template = await getTemplateForCampaign(campaignId)
   if (!template) return
 
-  const fields = template.fields as TemplateField[]
+  const fields = template.fields
   const requiredFields = fields.filter((f) => f.required)
   if (requiredFields.length === 0) return
 
