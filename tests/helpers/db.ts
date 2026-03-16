@@ -8,10 +8,11 @@ import {
   npcTemplates,
   npcAttributeValues,
 } from '../../src/features/npcs/db/schema'
+import type { TemplateField } from '../../src/features/npcs/schemas'
 import { sessions } from '../../src/features/sessions/db/schema'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-const db = drizzle(pool)
+const db = drizzle({ client: pool })
 
 export async function seedSystem(name: string, slug: string) {
   const [existing] = await db
@@ -88,7 +89,7 @@ export async function cleanNpcs() {
 
 export async function seedNpcTemplate(
   campaignId: string,
-  fields: unknown[] = [],
+  fields: TemplateField[] = [],
 ) {
   const [created] = await db
     .insert(npcTemplates)

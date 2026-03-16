@@ -354,9 +354,11 @@ test.describe('Session Detail — Tabs', () => {
 
     await loginAndGoToSessionDetail(page, campaign.id, session.id)
 
-    await page.getByRole('tab', { name: 'AI Chat' }).click()
+    await page.getByRole('tab', { name: 'AI Chat', exact: true }).click()
 
-    await expect(page.getByRole('heading', { name: 'AI Chat' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'AI Chat', exact: true }),
+    ).toBeVisible()
     await expect(page.getByText('Coming soon')).toBeVisible()
   })
 

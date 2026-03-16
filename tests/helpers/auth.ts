@@ -9,7 +9,7 @@ import {
 } from '../../src/features/auth/db/schema'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-const db = drizzle(pool)
+const db = drizzle({ client: pool })
 
 const BASE_URL = process.env.BETTER_AUTH_URL ?? 'http://localhost:3001'
 

@@ -7,7 +7,7 @@ export default async function globalSetup() {
   config({ path: '.env.test' })
 
   const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-  const db = drizzle(pool)
+  const db = drizzle({ client: pool })
 
   await db.execute('CREATE EXTENSION IF NOT EXISTS vector')
   await migrate(db, { migrationsFolder: './drizzle' })
