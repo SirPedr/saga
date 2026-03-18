@@ -1,8 +1,6 @@
 {
   "id": "40504e0f-3969-4ad1-a4d1-32da8f271faa",
-  "prevIds": [
-    "e75cf31f-51b6-4f4e-9b90-8932bc40a786"
-  ],
+  "prevIds": ["e75cf31f-51b6-4f4e-9b90-8932bc40a786"],
   "version": "8",
   "dialect": "postgres",
   "ddl": [
@@ -13,9 +11,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "account_pkey",
       "schema": "public",
@@ -214,14 +210,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "account_user_id_user_id_fk",
@@ -236,9 +228,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "session_pkey",
       "schema": "public",
@@ -351,9 +341,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "token"
-      ],
+      "columns": ["token"],
       "nullsNotDistinct": false,
       "name": "session_token_unique",
       "schema": "public",
@@ -383,14 +371,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_user_id_user_id_fk",
@@ -405,9 +389,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "user_pkey",
       "schema": "public",
@@ -507,9 +489,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "user_email_unique",
       "schema": "public",
@@ -523,9 +503,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "verification_pkey",
       "schema": "public",
@@ -638,9 +616,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "campaigns_pkey",
       "schema": "public",
@@ -727,14 +703,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "system_id"
-      ],
+      "columns": ["system_id"],
       "schemaTo": "public",
       "tableTo": "systems",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "campaigns_system_id_systems_id_fk",
@@ -749,9 +721,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "systems_pkey",
       "schema": "public",
@@ -799,9 +769,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "slug"
-      ],
+      "columns": ["slug"],
       "nullsNotDistinct": false,
       "name": "systems_slug_unique",
       "schema": "public",
@@ -854,10 +822,7 @@
       "entityType": "columns"
     },
     {
-      "columns": [
-        "npc_id",
-        "key"
-      ],
+      "columns": ["npc_id", "key"],
       "nameExplicit": false,
       "name": "npc_attribute_values_npc_id_key_pk",
       "schema": "public",
@@ -866,14 +831,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "npc_id"
-      ],
+      "columns": ["npc_id"],
       "schemaTo": "public",
       "tableTo": "npcs",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "npc_attribute_values_npc_id_npcs_id_fk",
@@ -888,9 +849,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "npc_templates_pkey",
       "schema": "public",
@@ -938,9 +897,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "campaign_id"
-      ],
+      "columns": ["campaign_id"],
       "nullsNotDistinct": false,
       "name": "npc_templates_campaign_id_unique",
       "schema": "public",
@@ -949,14 +906,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "campaign_id"
-      ],
+      "columns": ["campaign_id"],
       "schemaTo": "public",
       "tableTo": "campaigns",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "npc_templates_campaign_id_campaigns_id_fk",
@@ -971,9 +924,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "npcs_pkey",
       "schema": "public",
@@ -1073,14 +1024,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "campaign_id"
-      ],
+      "columns": ["campaign_id"],
       "schemaTo": "public",
       "tableTo": "campaigns",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "npcs_campaign_id_campaigns_id_fk",
@@ -1121,10 +1068,7 @@
       "entityType": "columns"
     },
     {
-      "columns": [
-        "session_id",
-        "faction_id"
-      ],
+      "columns": ["session_id", "faction_id"],
       "nameExplicit": false,
       "name": "session_factions_session_id_faction_id_pk",
       "schema": "public",
@@ -1133,14 +1077,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "session_id"
-      ],
+      "columns": ["session_id"],
       "schemaTo": "public",
       "tableTo": "sessions",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_factions_session_id_sessions_id_fk",
@@ -1194,10 +1134,7 @@
       "entityType": "columns"
     },
     {
-      "columns": [
-        "session_id",
-        "npc_id"
-      ],
+      "columns": ["session_id", "npc_id"],
       "nameExplicit": false,
       "name": "session_npcs_session_id_npc_id_pk",
       "schema": "public",
@@ -1206,14 +1143,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "session_id"
-      ],
+      "columns": ["session_id"],
       "schemaTo": "public",
       "tableTo": "sessions",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_npcs_session_id_sessions_id_fk",
@@ -1223,14 +1156,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "npc_id"
-      ],
+      "columns": ["npc_id"],
       "schemaTo": "public",
       "tableTo": "npcs",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_npcs_npc_id_npcs_id_fk",
@@ -1271,10 +1200,7 @@
       "entityType": "columns"
     },
     {
-      "columns": [
-        "session_id",
-        "playable_character_id"
-      ],
+      "columns": ["session_id", "playable_character_id"],
       "nameExplicit": false,
       "name": "session_playable_characters_session_id_playable_character_id_pk",
       "schema": "public",
@@ -1283,14 +1209,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "session_id"
-      ],
+      "columns": ["session_id"],
       "schemaTo": "public",
       "tableTo": "sessions",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_playable_characters_session_id_sessions_id_fk",
@@ -1305,9 +1227,7 @@
       "entityType": "tables"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "sessions_pkey",
       "schema": "public",
@@ -1459,14 +1379,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "campaign_id"
-      ],
+      "columns": ["campaign_id"],
       "schemaTo": "public",
       "tableTo": "campaigns",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "sessions_campaign_id_campaigns_id_fk",
