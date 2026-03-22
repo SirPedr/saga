@@ -102,7 +102,7 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
               >
                 <SelectTrigger
                   id={field.name}
-                  className="bg-popover border-border text-foreground data-placeholder:text-(--ink-faint)"
+                  className="bg-popover border-border text-foreground data-placeholder:text-(--silver-faint)"
                   aria-invalid={hasError}
                   aria-errormessage={hasError ? errorId : undefined}
                 >
@@ -134,7 +134,7 @@ export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
         {(field) => (
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={field.name} className="text-foreground">
-              Description <span className="text-(--ink-faint)">(optional)</span>
+              Description <span className="text-(--silver-faint)">(optional)</span>
             </Label>
             <Textarea
               id={field.name}

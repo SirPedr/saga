@@ -15,25 +15,25 @@ function HomePage() {
         <p className="island-kicker mb-3">Campaign planning, reimagined</p>
         <h1
           id="home-heading"
-          className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-(--ink) sm:text-6xl"
+          className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-(--silver) sm:text-6xl"
         >
           Your world. Every thread, remembered.
         </h1>
-        <p className="mb-8 max-w-2xl text-base text-(--ink-soft) sm:text-lg">
-          Saga is an AI-first grimoire for dungeon masters. Track NPCs,
+        <p className="mb-8 max-w-2xl text-base text-(--silver-soft) sm:text-lg">
+          Saga is an AI-first sanctum for dungeon masters. Track NPCs,
           factions, and sessions — let the AI surface connections you've
           forgotten, propose world changes, and plan your next session with you.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
             href="/campaigns"
-            className="border border-(--cta-amber-border) bg-(--cta-amber-bg) px-5 py-2.5 text-sm font-semibold text-(--amber) no-underline transition hover:-translate-y-0.5 hover:bg-(--cta-amber-bg-hover)"
+            className="border border-(--cta-crimson-border) bg-(--cta-crimson-bg) px-5 py-2.5 text-sm font-semibold text-(--crimson) no-underline transition hover:-translate-y-0.5 hover:bg-(--cta-crimson-bg-hover)"
           >
             Open Campaigns
           </a>
           <a
             href="/login"
-            className="border border-(--line) bg-(--cta-ghost-bg) px-5 py-2.5 text-sm font-semibold text-(--ink-soft) no-underline transition hover:-translate-y-0.5 hover:border-(--amber) hover:text-(--ink)"
+            className="border border-(--line) bg-(--cta-ghost-bg) px-5 py-2.5 text-sm font-semibold text-(--silver-soft) no-underline transition hover:-translate-y-0.5 hover:border-(--crimson) hover:text-(--silver)"
           >
             Sign In
           </a>
@@ -65,10 +65,10 @@ function HomePage() {
             className="island-shell feature-card rise-in p-5"
             style={{ animationDelay: `${index * 90 + 80}ms` }}
           >
-            <h2 className="mb-2 text-base font-semibold text-(--ink)">
+            <h2 className="mb-2 text-base font-semibold text-(--silver)">
               {title}
             </h2>
-            <p className="m-0 text-sm text-(--ink-soft)">{desc}</p>
+            <p className="m-0 text-sm text-(--silver-soft)">{desc}</p>
           </article>
         ))}
       </section>
@@ -76,7 +76,7 @@ function HomePage() {
       {/* Status note */}
       <section className="island-shell mt-8 p-6">
         <p className="island-kicker mb-2">Early Access</p>
-        <p className="m-0 text-sm text-(--ink-soft)">
+        <p className="m-0 text-sm text-(--silver-soft)">
           Saga is in active development. Sign in to start building your first
           campaign, or{' '}
           <a href="/campaigns" className="font-medium">

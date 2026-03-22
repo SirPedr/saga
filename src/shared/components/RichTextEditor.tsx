@@ -41,7 +41,7 @@ function Toolbar({ editor }: { editor: Editor }) {
 
   return (
     <div
-      className="flex items-center gap-1 border-b border-border bg-vellum-2 p-1"
+      className="flex items-center gap-1 border-b border-border bg-stone-2 p-1"
       role="toolbar"
       aria-label="Text formatting"
     >

@@ -17,9 +17,9 @@ export function Nav() {
         <h2 className="m-0 shrink-0 text-base font-semibold tracking-tight">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 border border-(--chip-line) bg-(--chip-bg) px-3 py-1.5 text-sm text-(--ink) no-underline shadow-[0_6px_20px_rgba(10,8,5,0.08)] sm:px-4 sm:py-2"
+            className="inline-flex items-center gap-2 border border-(--chip-line) bg-(--chip-bg) px-3 py-1.5 text-sm text-(--silver) no-underline shadow-[0_6px_20px_rgba(6,6,14,0.08)] sm:px-4 sm:py-2"
           >
-            <span className="h-2 w-2 bg-[linear-gradient(135deg,var(--amber),var(--amber-deep))]" />
+            <span className="h-2 w-2 bg-[linear-gradient(135deg,var(--crimson),var(--crimson-deep))]" />
             Saga
           </Link>
         </h2>
@@ -43,11 +43,11 @@ export function Nav() {
 
         <div className="ml-auto flex items-center gap-2">
           {isPending && (
-            <div className="h-8 w-8 animate-pulse bg-(--vellum-3)" />
+            <div className="h-8 w-8 animate-pulse bg-(--stone-3)" />
           )}
           {!isPending && session?.user && (
             <>
-              <span className="hidden text-xs text-(--ink-soft) sm:block">
+              <span className="hidden text-xs text-(--silver-soft) sm:block">
                 {session.user.email}
               </span>
               <Button
@@ -63,7 +63,7 @@ export function Nav() {
           {!isPending && !session?.user && (
             <Link
               to="/login"
-              className="inline-flex h-8 items-center border border-(--chip-line) bg-(--chip-bg) px-3 text-xs font-semibold text-(--amber) no-underline transition hover:border-(--amber) hover:text-(--amber-deep)"
+              className="inline-flex h-8 items-center border border-(--chip-line) bg-(--chip-bg) px-3 text-xs font-semibold text-(--crimson) no-underline transition hover:border-(--crimson) hover:text-(--crimson-deep)"
             >
               Sign in
             </Link>

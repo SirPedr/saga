@@ -49,7 +49,7 @@ export function CampaignDetailLayout() {
                 key={tab.to}
                 to={tab.to}
                 params={{ campaignId }}
-                className="whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-xs font-bold uppercase tracking-widest text-(--ink-faint) transition-colors"
+                className="whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-xs font-bold uppercase tracking-widest text-(--silver-faint) transition-colors"
                 activeProps={{
                   className:
                     'whitespace-nowrap border-b-2 border-primary px-3 py-2 text-xs font-bold uppercase tracking-widest text-primary transition-colors',

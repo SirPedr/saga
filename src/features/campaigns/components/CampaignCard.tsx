@@ -78,7 +78,7 @@ export function CampaignCard({ campaign }: { campaign: CampaignWithSystem }) {
             </p>
           )}
 
-          <p className="mt-auto font-sans text-xs text-(--ink-faint)">
+          <p className="mt-auto font-sans text-xs text-(--silver-faint)">
             Created {formattedDate}
           </p>
         </article>

@@ -23,7 +23,7 @@ export function SessionCard({ session }: { session: Session }) {
     >
       <article className="flex h-full flex-col gap-3 border border-border bg-card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-all duration-200">
         <div className="flex items-start justify-between gap-3">
-          <span className="text-xs font-bold uppercase tracking-widest text-(--ink-faint)">
+          <span className="text-xs font-bold uppercase tracking-widest text-(--silver-faint)">
             Session {session.sessionNumber}
           </span>
           <span
@@ -38,7 +38,7 @@ export function SessionCard({ session }: { session: Session }) {
           {session.title}
         </h3>
 
-        <p className="mt-auto font-sans text-xs text-(--ink-faint)">
+        <p className="mt-auto font-sans text-xs text-(--silver-faint)">
           {formattedDate ?? 'No date set'}
         </p>
       </article>

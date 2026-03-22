@@ -138,7 +138,7 @@ export function SessionForm({
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={field.name} className="text-foreground">
               Session Date{' '}
-              <span className="text-(--ink-faint)">(optional)</span>
+              <span className="text-(--silver-faint)">(optional)</span>
             </Label>
             <Input
               id={field.name}

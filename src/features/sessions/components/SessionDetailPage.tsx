@@ -50,7 +50,7 @@ function SaveIndicator({ status }: { status: 'idle' | 'saving' | 'saved' }) {
   if (status === 'idle') return null
   return (
     <span
-      className="text-xs text-(--ink-faint) transition-opacity"
+      className="text-xs text-(--silver-faint) transition-opacity"
       aria-live="polite"
     >
       {status === 'saving' ? 'Saving\u2026' : 'Saved'}
@@ -69,7 +69,7 @@ function PlaceholderSection({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 py-16 text-center">
-      <Icon className="size-10 text-(--ink-faint)" />
+      <Icon className="size-10 text-(--silver-faint)" />
       <h3 className="font-display text-lg font-semibold text-foreground">
         {title}
       </h3>
@@ -111,7 +111,7 @@ export function SessionDetailPage() {
       <Link
         to="/campaigns/$campaignId/sessions"
         params={{ campaignId }}
-        className="inline-flex items-center gap-1.5 text-sm text-(--ink-faint) transition-colors hover:text-foreground"
+        className="inline-flex items-center gap-1.5 text-sm text-(--silver-faint) transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Sessions
@@ -134,7 +134,7 @@ export function SessionDetailPage() {
           {session!.title}
         </h1>
         {formattedDate && (
-          <p className="text-sm text-(--ink-faint)">{formattedDate}</p>
+          <p className="text-sm text-(--silver-faint)">{formattedDate}</p>
         )}
       </header>
 
@@ -173,7 +173,7 @@ export function SessionDetailPage() {
               <SaveIndicator status={outcome.saveStatus} />
             </div>
             {isPlanned && (
-              <p className="mb-2 text-sm text-(--ink-faint)">
+              <p className="mb-2 text-sm text-(--silver-faint)">
                 Outcome notes unlock after the session is marked as completed.
               </p>
             )}
