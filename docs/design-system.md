@@ -47,12 +47,12 @@ All values use oklch() format. Hex approximations shown for reference.
 
 ## Typography
 
-| Role             | Font                | Weight  | Notes                                  |
-| ---------------- | ------------------- | ------- | -------------------------------------- |
+| Role             | Font                | Weight  | Notes                                         |
+| ---------------- | ------------------- | ------- | --------------------------------------------- |
 | Display / H1     | Cinzel (serif)      | 500–700 | Chiseled, monumental — cathedral inscriptions |
-| Body / UI        | Crimson Pro (serif)  | 400–700 | Elegant readability, gothic warmth     |
-| Labels / kickers | Crimson Pro          | 700     | Uppercase, wide letter-spacing         |
-| Code / IDs       | ui-monospace        | 400     | System monospace stack                 |
+| Body / UI        | Crimson Pro (serif) | 400–700 | Elegant readability, gothic warmth            |
+| Labels / kickers | Crimson Pro         | 700     | Uppercase, wide letter-spacing                |
+| Code / IDs       | ui-monospace        | 400     | System monospace stack                        |
 
 ## Component Guidelines
 

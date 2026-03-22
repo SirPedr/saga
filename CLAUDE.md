@@ -174,21 +174,21 @@ Cards have weight and depth rather than glass-morphism lightness.
 
 **Color palette — cathedral gothic (oklch format):**
 
-| Token            | Purpose                              | Dark Mode                         | Light Mode                        |
-| ---------------- | ------------------------------------ | --------------------------------- | --------------------------------- |
-| `--stone`        | Page background                      | `oklch(0.08 0.005 280)`          | `oklch(0.93 0.01 280)`           |
-| `--stone-2`      | Elevated surface                     | `oklch(0.12 0.01 280)`           | `oklch(0.89 0.015 280)`          |
-| `--stone-3`      | Card / panel                         | `oklch(0.16 0.012 280)`          | `oklch(0.84 0.018 280)`          |
-| `--silver`       | Primary text                         | `oklch(0.83 0.012 280)`          | `oklch(0.12 0.01 280)`           |
-| `--silver-soft`  | Secondary text                       | `oklch(0.57 0.02 280)`           | `oklch(0.30 0.02 280)`           |
-| `--silver-faint` | Placeholder / disabled               | `oklch(0.33 0.025 280)`          | `oklch(0.62 0.025 280)`          |
-| `--crimson`      | Primary accent / interactive         | `oklch(0.45 0.18 20)`            | `oklch(0.38 0.16 18)`            |
-| `--crimson-deep` | Accent hover / pressed               | `oklch(0.38 0.16 18)`            | `oklch(0.32 0.14 16)`            |
-| `--arcane`       | Secondary accent (stained glass)     | `oklch(0.35 0.09 300)`           | `oklch(0.22 0.08 296)`           |
-| `--arcane-soft`  | Arcane hover                         | `oklch(0.30 0.08 298)`           | `oklch(0.18 0.07 294)`           |
-| `--line`         | Borders / dividers                   | `oklch(0.83 0.012 280 / 0.08)`   | `oklch(0.12 0.01 280 / 0.10)`    |
-| `--blood`        | Destructive / danger                 | `oklch(0.48 0.19 22)`            | `oklch(0.44 0.17 20)`            |
-| `--glint`        | Inset highlight                      | `oklch(0.85 0.02 250 / 0.03)`    | `oklch(1 0 0 / 0.65)`            |
+| Token            | Purpose                          | Dark Mode                      | Light Mode                    |
+| ---------------- | -------------------------------- | ------------------------------ | ----------------------------- |
+| `--stone`        | Page background                  | `oklch(0.08 0.005 280)`        | `oklch(0.93 0.01 280)`        |
+| `--stone-2`      | Elevated surface                 | `oklch(0.12 0.01 280)`         | `oklch(0.89 0.015 280)`       |
+| `--stone-3`      | Card / panel                     | `oklch(0.16 0.012 280)`        | `oklch(0.84 0.018 280)`       |
+| `--silver`       | Primary text                     | `oklch(0.83 0.012 280)`        | `oklch(0.12 0.01 280)`        |
+| `--silver-soft`  | Secondary text                   | `oklch(0.57 0.02 280)`         | `oklch(0.30 0.02 280)`        |
+| `--silver-faint` | Placeholder / disabled           | `oklch(0.33 0.025 280)`        | `oklch(0.62 0.025 280)`       |
+| `--crimson`      | Primary accent / interactive     | `oklch(0.45 0.18 20)`          | `oklch(0.38 0.16 18)`         |
+| `--crimson-deep` | Accent hover / pressed           | `oklch(0.38 0.16 18)`          | `oklch(0.32 0.14 16)`         |
+| `--arcane`       | Secondary accent (stained glass) | `oklch(0.35 0.09 300)`         | `oklch(0.22 0.08 296)`        |
+| `--arcane-soft`  | Arcane hover                     | `oklch(0.30 0.08 298)`         | `oklch(0.18 0.07 294)`        |
+| `--line`         | Borders / dividers               | `oklch(0.83 0.012 280 / 0.08)` | `oklch(0.12 0.01 280 / 0.10)` |
+| `--blood`        | Destructive / danger             | `oklch(0.48 0.19 22)`          | `oklch(0.44 0.17 20)`         |
+| `--glint`        | Inset highlight                  | `oklch(0.85 0.02 250 / 0.03)`  | `oklch(1 0 0 / 0.65)`         |
 
 **Typography:**
 
