@@ -21,12 +21,17 @@ export function NpcListPage() {
   return (
     <section aria-labelledby="npcs-heading">
       <div className="mb-8 flex items-center justify-between">
-        <h2
-          id="npcs-heading"
-          className="font-display text-2xl font-semibold text-foreground"
-        >
-          NPCs
-        </h2>
+        <div>
+          <h2
+            id="npcs-heading"
+            className="font-display text-3xl font-semibold text-foreground"
+          >
+            NPCs
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Characters that inhabit your world
+          </p>
+        </div>
       </div>
 
       {/* Collapsible Template Editor */}

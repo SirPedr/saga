@@ -2,8 +2,9 @@ import { Link } from '@tanstack/react-router'
 import type { Session } from '../db/schema'
 
 const statusStyles = {
-  planned: 'bg-muted text-muted-foreground',
-  completed: 'bg-[rgba(78,120,64,0.15)] text-[#4e7840]',
+  planned: 'bg-(--chip-bg) text-(--silver-soft) border border-(--line)',
+  completed:
+    'bg-(--badge-system-bg) text-(--crimson) border border-(--badge-system-border)',
 } as const
 
 export function SessionCard({ session }: { session: Session }) {
@@ -21,24 +22,25 @@ export function SessionCard({ session }: { session: Session }) {
       params={{ campaignId: session.campaignId, sessionId: session.id }}
       className="group block"
     >
-      <article className="flex h-full flex-col gap-3 border border-border bg-card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-all duration-200">
-        <div className="flex items-start justify-between gap-3">
-          <span className="text-xs font-bold uppercase tracking-widest text-(--silver-faint)">
-            Session {session.sessionNumber}
-          </span>
+      <article className="feature-card flex h-full flex-col border border-(--line) p-5 shadow-sm transition-all duration-200">
+        {/* Kicker row — tight grouping */}
+        <div className="flex items-center justify-between gap-3">
+          <span className="island-kicker">Session {session.sessionNumber}</span>
           <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-widest ${statusStyles[session.status]}`}
+            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${statusStyles[session.status]}`}
             aria-label={`Status: ${session.status}`}
           >
             {session.status}
           </span>
         </div>
 
-        <h3 className="font-display text-lg font-semibold text-foreground">
+        {/* Title — generous space above, the card's hero content */}
+        <h3 className="mt-4 font-display text-xl font-semibold leading-snug text-foreground">
           {session.title}
         </h3>
 
-        <p className="mt-auto font-sans text-xs text-(--silver-faint)">
+        {/* Date — pushed to bottom with breathing room */}
+        <p className="mt-auto pt-5 text-sm text-(--silver-soft)">
           {formattedDate ?? 'No date set'}
         </p>
       </article>

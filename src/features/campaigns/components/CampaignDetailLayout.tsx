@@ -23,7 +23,7 @@ export function CampaignDetailLayout() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="border-b border-border bg-muted px-6 pb-0 pt-6">
+      <div className="border-b border-border bg-muted px-4 pb-0 pt-6">
         <div className="page-wrap flex flex-col gap-3">
           <div className="flex items-start justify-between gap-4">
             <h1 className="font-display text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
@@ -43,7 +43,7 @@ export function CampaignDetailLayout() {
             </p>
           )}
 
-          <nav className="-mb-px flex gap-1 overflow-x-auto pt-2">
+          <nav className="-mb-px -ml-3 flex gap-1 overflow-x-auto pt-2">
             {tabs.map((tab) => (
               <Link
                 key={tab.to}
@@ -62,7 +62,7 @@ export function CampaignDetailLayout() {
         </div>
       </div>
 
-      <div className="flex-1 px-6 py-6">
+      <div className="flex-1 py-8">
         <div className="page-wrap">
           <Outlet />
         </div>

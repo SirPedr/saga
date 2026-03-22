@@ -8,8 +8,9 @@ import { sessionQueryOptions } from '../server/queries'
 import { updateSession } from '../server/index'
 
 const statusStyles = {
-  planned: 'bg-muted text-muted-foreground',
-  completed: 'bg-[rgba(78,120,64,0.15)] text-[#4e7840]',
+  planned: 'bg-(--chip-bg) text-(--silver-soft) border border-(--line)',
+  completed:
+    'bg-(--badge-system-bg) text-(--crimson) border border-(--badge-system-border)',
 } as const
 
 function useAutoSaveEditor(
@@ -106,36 +107,40 @@ export function SessionDetailPage() {
   const isPlanned = session!.status === 'planned'
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Back link */}
+    <div className="flex flex-col">
+      {/* Back link — tight to header */}
       <Link
         to="/campaigns/$campaignId/sessions"
         params={{ campaignId }}
-        className="inline-flex items-center gap-1.5 text-sm text-(--silver-faint) transition-colors hover:text-foreground"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm text-(--silver-faint) transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
         Sessions
       </Link>
 
-      {/* Session header */}
-      <header className="flex flex-col gap-2">
+      {/* Session header — generous bottom margin for rhythm */}
+      <header className="mb-10 flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <span className="island-kicker">
             Session {session!.sessionNumber}
           </span>
+          {formattedDate && (
+            <span className="text-xs text-(--silver-faint)">
+              {formattedDate}
+            </span>
+          )}
+        </div>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+            {session!.title}
+          </h1>
           <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-widest ${statusStyles[session!.status]}`}
+            className={`mt-1.5 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-widest ${statusStyles[session!.status]}`}
             aria-label={`Status: ${session!.status}`}
           >
             {session!.status}
           </span>
         </div>
-        <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-          {session!.title}
-        </h1>
-        {formattedDate && (
-          <p className="text-sm text-(--silver-faint)">{formattedDate}</p>
-        )}
       </header>
 
       {/* Tabs */}
@@ -147,10 +152,13 @@ export function SessionDetailPage() {
           <TabsTrigger value="debrief">Debrief</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="planning" className="flex flex-col gap-8 pt-6">
+        <TabsContent value="planning" className="flex flex-col gap-12 pt-8">
           {/* Planning Notes */}
-          <section aria-labelledby="planning-notes-heading">
-            <div className="mb-2 flex items-center justify-between">
+          <section
+            aria-labelledby="planning-notes-heading"
+            className="max-w-3xl"
+          >
+            <div className="mb-3 flex items-center justify-between">
               <h2 id="planning-notes-heading" className="island-kicker">
                 Planning Notes
               </h2>
@@ -164,16 +172,22 @@ export function SessionDetailPage() {
             />
           </section>
 
+          {/* Divider */}
+          <hr className="max-w-3xl border-t border-(--line)" />
+
           {/* Outcome Notes */}
-          <section aria-labelledby="outcome-notes-heading">
-            <div className="mb-2 flex items-center justify-between">
+          <section
+            aria-labelledby="outcome-notes-heading"
+            className="max-w-3xl"
+          >
+            <div className="mb-3 flex items-center justify-between">
               <h2 id="outcome-notes-heading" className="island-kicker">
                 Outcome Notes
               </h2>
               <SaveIndicator status={outcome.saveStatus} />
             </div>
             {isPlanned && (
-              <p className="mb-2 text-sm text-(--silver-faint)">
+              <p className="mb-3 text-sm text-(--silver-faint)">
                 Outcome notes unlock after the session is marked as completed.
               </p>
             )}

@@ -4,10 +4,7 @@ export const Route = createFileRoute('/')({ component: HomePage })
 
 function HomePage() {
   return (
-    <section
-      aria-labelledby="home-heading"
-      className="page-wrap px-4 pb-8 pt-14"
-    >
+    <section aria-labelledby="home-heading" className="page-wrap pb-10 pt-14">
       {/* Hero */}
       <section className="island-shell rise-in relative overflow-hidden px-6 py-10 sm:px-10 sm:py-14">
         <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 bg-[radial-gradient(circle,var(--hero-a),transparent_66%)]" />
@@ -20,9 +17,9 @@ function HomePage() {
           Your world. Every thread, remembered.
         </h1>
         <p className="mb-8 max-w-2xl text-base text-(--silver-soft) sm:text-lg">
-          Saga is an AI-first sanctum for dungeon masters. Track NPCs,
-          factions, and sessions — let the AI surface connections you've
-          forgotten, propose world changes, and plan your next session with you.
+          Saga is an AI-first sanctum for dungeon masters. Track NPCs, factions,
+          and sessions — let the AI surface connections you've forgotten,
+          propose world changes, and plan your next session with you.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
@@ -59,18 +56,26 @@ function HomePage() {
             'World Event Log',
             'An append-only record of everything that has changed. AI always sees only the approved canon.',
           ],
-        ].map(([title, desc], index) => (
-          <article
-            key={title}
-            className="island-shell feature-card rise-in p-5"
-            style={{ animationDelay: `${index * 90 + 80}ms` }}
-          >
-            <h2 className="mb-2 text-base font-semibold text-(--silver)">
-              {title}
-            </h2>
-            <p className="m-0 text-sm text-(--silver-soft)">{desc}</p>
-          </article>
-        ))}
+        ].map(([title, desc], index) => {
+          const delayClass = [
+            '[animation-delay:80ms]',
+            '[animation-delay:170ms]',
+            '[animation-delay:260ms]',
+            '[animation-delay:350ms]',
+          ][index]
+
+          return (
+            <article
+              key={title}
+              className={`island-shell feature-card rise-in p-5 ${delayClass}`}
+            >
+              <h2 className="mb-2 text-base font-semibold text-(--silver)">
+                {title}
+              </h2>
+              <p className="m-0 text-sm text-(--silver-soft)">{desc}</p>
+            </article>
+          )
+        })}
       </section>
 
       {/* Status note */}

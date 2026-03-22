@@ -24,14 +24,22 @@ export function SessionListPage() {
   return (
     <section aria-labelledby="sessions-heading">
       <div className="mb-8 flex items-center justify-between">
-        <h2
-          id="sessions-heading"
-          className="font-display text-2xl font-semibold text-foreground"
-        >
-          Sessions
-        </h2>
+        <div>
+          <p className="island-kicker mb-2">Campaign Chronicle</p>
+          <h2
+            id="sessions-heading"
+            className="font-display text-3xl font-semibold text-foreground"
+          >
+            Sessions
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {sortedSessions.length > 0
+              ? `${sortedSessions.length} session${sortedSessions.length !== 1 ? 's' : ''} recorded`
+              : 'No sessions recorded yet'}
+          </p>
+        </div>
 
-        <Button onClick={() => setOpen(true)} className="font-bold">
+        <Button onClick={() => setOpen(true)} className="shrink-0 font-bold">
           New Session
         </Button>
       </div>

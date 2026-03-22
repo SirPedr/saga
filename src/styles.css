@@ -13,13 +13,13 @@
   --stone-2: oklch(0.89 0.015 280);
   --stone-3: oklch(0.84 0.018 280);
   --silver: oklch(0.12 0.01 280);
-  --silver-soft: oklch(0.30 0.02 280);
+  --silver-soft: oklch(0.3 0.02 280);
   --silver-faint: oklch(0.62 0.025 280);
   --crimson: oklch(0.38 0.16 18);
   --crimson-deep: oklch(0.32 0.14 16);
   --arcane: oklch(0.22 0.08 296);
   --arcane-soft: oklch(0.18 0.07 294);
-  --line: oklch(0.12 0.01 280 / 0.10);
+  --line: oklch(0.12 0.01 280 / 0.1);
   --blood: oklch(0.44 0.17 20);
   --glint: oklch(1 0 0 / 0.65);
 
@@ -55,12 +55,12 @@
   --secondary: oklch(0.84 0.018 280);
   --secondary-foreground: oklch(0.12 0.01 280);
   --muted: oklch(0.89 0.015 280);
-  --muted-foreground: oklch(0.30 0.02 280);
+  --muted-foreground: oklch(0.3 0.02 280);
   --accent: oklch(0.84 0.018 280);
   --accent-foreground: oklch(0.12 0.01 280);
   --destructive: oklch(0.44 0.17 20);
   --destructive-foreground: oklch(0.97 0.01 60);
-  --border: oklch(0.12 0.01 280 / 0.10);
+  --border: oklch(0.12 0.01 280 / 0.1);
   --input: oklch(0.78 0.02 280);
   --ring: oklch(0.38 0.16 18);
   --radius: 0.5rem;
@@ -72,20 +72,21 @@
   --sidebar-primary-foreground: oklch(0.93 0.01 280);
   --sidebar-accent: oklch(0.84 0.018 280);
   --sidebar-accent-foreground: oklch(0.12 0.01 280);
-  --sidebar-border: oklch(0.12 0.01 280 / 0.10);
+  --sidebar-border: oklch(0.12 0.01 280 / 0.1);
   --sidebar-ring: oklch(0.38 0.16 18);
 
   /* Charts */
   --chart-1: oklch(0.38 0.16 18);
   --chart-2: oklch(0.22 0.08 296);
   --chart-3: oklch(0.35 0.12 350);
-  --chart-4: oklch(0.30 0.06 240);
+  --chart-4: oklch(0.3 0.06 240);
   --chart-5: oklch(0.35 0.08 160);
 
   /* Fonts */
   --font-sans: 'Crimson Pro', Georgia, serif;
   --font-serif: 'Cinzel', 'Times New Roman', serif;
-  --font-mono: ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', monospace;
+  --font-mono:
+    ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', monospace;
 
   /* Shadow primitives */
   --shadow-x: 0px;
@@ -128,11 +129,11 @@
   --stone-3: oklch(0.16 0.012 280);
   --silver: oklch(0.83 0.012 280);
   --silver-soft: oklch(0.57 0.02 280);
-  --silver-faint: oklch(0.33 0.025 280);
+  --silver-faint: oklch(0.4 0.02 280);
   --crimson: oklch(0.45 0.18 20);
   --crimson-deep: oklch(0.38 0.16 18);
   --arcane: oklch(0.35 0.09 300);
-  --arcane-soft: oklch(0.30 0.08 298);
+  --arcane-soft: oklch(0.3 0.08 298);
   --line: oklch(0.83 0.012 280 / 0.08);
   --blood: oklch(0.48 0.19 22);
   --glint: oklch(0.85 0.02 250 / 0.03);
@@ -175,7 +176,7 @@
   --destructive: oklch(0.48 0.19 22);
   --destructive-foreground: oklch(0.95 0.02 20);
   --border: oklch(0.83 0.012 280 / 0.08);
-  --input: oklch(0.20 0.015 280);
+  --input: oklch(0.2 0.015 280);
   --ring: oklch(0.45 0.18 20);
 
   /* Sidebar */
@@ -191,14 +192,15 @@
   /* Charts */
   --chart-1: oklch(0.45 0.18 20);
   --chart-2: oklch(0.45 0.12 300);
-  --chart-3: oklch(0.50 0.14 350);
-  --chart-4: oklch(0.40 0.08 240);
-  --chart-5: oklch(0.45 0.10 160);
+  --chart-3: oklch(0.5 0.14 350);
+  --chart-4: oklch(0.4 0.08 240);
+  --chart-5: oklch(0.45 0.1 160);
 
   /* Fonts (same in both modes) */
   --font-sans: 'Crimson Pro', Georgia, serif;
   --font-serif: 'Cinzel', 'Times New Roman', serif;
-  --font-mono: ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', monospace;
+  --font-mono:
+    ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', monospace;
 
   /* Radius (same in both modes) */
   --radius: 0.5rem;
@@ -448,10 +450,10 @@ a {
 
 /* Gothic annotation kicker — uppercase label style */
 .island-kicker {
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 700;
-  font-size: 0.69rem;
+  font-size: 0.75rem;
   color: var(--kicker);
 }
 
