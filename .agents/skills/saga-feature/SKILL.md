@@ -357,13 +357,13 @@ Every style in this project must come from Tailwind utility classes. Inline styl
 
 ```tsx
 // Correct — uses theme tokens through Tailwind
-<h2 className="font-display text-ink text-2xl">Chapter Title</h2>
-<div className="bg-vellum-2 border-line p-4">...</div>
-<button className="bg-amber hover:bg-amber-deep text-ink">Save</button>
+<h2 className="font-display text-silver text-2xl">Chapter Title</h2>
+<div className="bg-stone-2 border-line p-4">...</div>
+<button className="bg-crimson hover:bg-crimson-deep text-silver">Save</button>
 
 // Wrong — inline styles bypass the theme
-<h2 style={{ fontFamily: 'Fraunces', color: '#e8ddc8' }}>Chapter Title</h2>
-<div style={{ background: '#17140f', borderColor: 'rgba(232,221,200,0.10)' }}>...</div>
+<h2 style={{ fontFamily: 'Cinzel', color: '#c8c8d4' }}>Chapter Title</h2>
+<div style={{ background: '#101018', borderColor: 'rgba(200,200,212,0.08)' }}>...</div>
 ```
 
 **When a value isn't in the theme**, use the closest existing token rather than hardcoding a color or size. For example, if a design calls for `#d9a840`, use `text-amber` (which maps to `#d4a348`) — the small difference won't matter, and theme consistency will. If the design genuinely requires a new token that nothing existing covers, add it properly: define the CSS custom property in both `:root` and `.dark` blocks in `src/styles.css`, then register it in the `@theme inline` block so Tailwind can generate classes for it.

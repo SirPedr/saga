@@ -155,46 +155,46 @@ that feels atmospheric enough to inspire and efficient enough to get real work d
 
 ### Brand Personality
 
-**Arcane, Intimate, Purposeful**
+**Reverent, Monumental, Purposeful**
 
-Saga is a master DM's digitized grimoire — hand-annotated, worn at the edges, but meticulously
-organized. The voice is quiet authority: confident, knowing, a little mysterious. The interface
-should feel like it holds secrets worth discovering. Think ink, parchment, candlelight. Dramatic
-and atmospheric, never garish.
+Saga is a master DM's consecrated sanctum — stone walls, stained glass light, meticulously
+inscribed. The voice is quiet authority: confident, knowing, reverent. The interface should feel
+like entering a cathedral that holds centuries of secrets. Think cold stone, moonlight, blood-red
+ink. Dramatic and atmospheric, never garish.
 
 ### Aesthetic Direction
 
 **Primary theme: Dark mode first.** All component design decisions begin with dark mode. Light mode
-is a valid but secondary experience (aged cream/parchment tones, not tropical or pastel).
+is a valid but secondary experience (cold stone tones, not tropical or pastel).
 
-**Visual metaphor: Ink + magic grimoire.** An ancient spellbook digitized — dark vellum backgrounds
-with warm undertones, aged-ink text hierarchy, amber/candlelight accents, subtle texture suggesting
-paper or parchment. Components feel like journal entries or field notes. Cards have weight and
-depth rather than glass-morphism lightness.
+**Visual metaphor: Cathedral + stained glass.** A gothic cathedral digitized — near-black stone
+surfaces with blue undertones, silver text hierarchy, deep crimson accents, subtle texture
+suggesting stone lattice. Components feel like carved inscriptions or illuminated manuscripts.
+Cards have weight and depth rather than glass-morphism lightness.
 
-**Color palette — arcane/grimoire:**
+**Color palette — cathedral gothic (oklch format):**
 
-| Token           | Purpose                         | Dark Mode                | Light Mode               |
-| --------------- | ------------------------------- | ------------------------ | ------------------------ |
-| `--vellum`      | Page background                 | `#0f0d0a`                | `#f5f0e8`                |
-| `--vellum-2`    | Elevated surface                | `#17140f`                | `#ede6d6`                |
-| `--vellum-3`    | Card / panel                    | `#1e1a14`                | `#e5dcc6`                |
-| `--ink`         | Primary text                    | `#e8ddc8`                | `#1a1510`                |
-| `--ink-soft`    | Secondary text                  | `#a08c6e`                | `#4a3f2e`                |
-| `--ink-faint`   | Placeholder / disabled          | `#5a4e3a`                | `#9a8e78`                |
-| `--amber`       | Primary accent / interactive    | `#d4a348`                | `#b8862c`                |
-| `--amber-deep`  | Accent hover / pressed          | `#b8862c`                | `#9a6e1e`                |
-| `--arcane`      | Secondary accent (cool magical) | `#4a6e8a`                | `#2a4e6a`                |
-| `--arcane-soft` | Arcane hover                    | `#3a5a74`                | `#1e3e54`                |
-| `--line`        | Borders / dividers              | `rgba(232,221,200,0.10)` | `rgba(26,21,16,0.12)`    |
-| `--crimson`     | Destructive / danger            | `#c43030`                | `#a02020`                |
-| `--glint`       | Inset highlight                 | `rgba(255,240,200,0.04)` | `rgba(255,255,255,0.70)` |
+| Token            | Purpose                              | Dark Mode                         | Light Mode                        |
+| ---------------- | ------------------------------------ | --------------------------------- | --------------------------------- |
+| `--stone`        | Page background                      | `oklch(0.08 0.005 280)`          | `oklch(0.93 0.01 280)`           |
+| `--stone-2`      | Elevated surface                     | `oklch(0.12 0.01 280)`           | `oklch(0.89 0.015 280)`          |
+| `--stone-3`      | Card / panel                         | `oklch(0.16 0.012 280)`          | `oklch(0.84 0.018 280)`          |
+| `--silver`       | Primary text                         | `oklch(0.83 0.012 280)`          | `oklch(0.12 0.01 280)`           |
+| `--silver-soft`  | Secondary text                       | `oklch(0.57 0.02 280)`           | `oklch(0.30 0.02 280)`           |
+| `--silver-faint` | Placeholder / disabled               | `oklch(0.33 0.025 280)`          | `oklch(0.62 0.025 280)`          |
+| `--crimson`      | Primary accent / interactive         | `oklch(0.45 0.18 20)`            | `oklch(0.38 0.16 18)`            |
+| `--crimson-deep` | Accent hover / pressed               | `oklch(0.38 0.16 18)`            | `oklch(0.32 0.14 16)`            |
+| `--arcane`       | Secondary accent (stained glass)     | `oklch(0.35 0.09 300)`           | `oklch(0.22 0.08 296)`           |
+| `--arcane-soft`  | Arcane hover                         | `oklch(0.30 0.08 298)`           | `oklch(0.18 0.07 294)`           |
+| `--line`         | Borders / dividers                   | `oklch(0.83 0.012 280 / 0.08)`   | `oklch(0.12 0.01 280 / 0.10)`    |
+| `--blood`        | Destructive / danger                 | `oklch(0.48 0.19 22)`            | `oklch(0.44 0.17 20)`            |
+| `--glint`        | Inset highlight                      | `oklch(0.85 0.02 250 / 0.03)`    | `oklch(1 0 0 / 0.65)`            |
 
 **Typography:**
 
-- **Display / headings**: Fraunces (serif, 500–700) — the editorial anchor; earns every use
-- **Body / UI**: Manrope (sans-serif, 400–700) — precise but warm
-- **Labels / kickers**: Manrope 700, uppercase, wide letter-spacing — arcane annotation style
+- **Display / headings**: Cinzel (serif, 500–700) — chiseled, monumental; cathedral inscriptions
+- **Body / UI**: Crimson Pro (serif, 400–700) — elegant readability, gothic warmth
+- **Labels / kickers**: Crimson Pro 700, uppercase, wide letter-spacing — gothic annotation style
 - **Code / IDs / data**: System monospace (`ui-monospace, 'Cascadia Code', monospace`)
 
 Typography is the primary design tool. Hierarchy is communicated through type weight and scale
@@ -202,11 +202,11 @@ before color. Every heading must earn its display treatment.
 
 **Component feel:**
 
-- Cards and panels: deep vellum surface, subtle sepia-ink border, soft warm inner glow
-- Dividers: ink-stroke style — thin, warm-toned, slightly transparent
-- Shadows: layered warm-dark (not cool/blue-gray)
-- Hover/interactive states: amber glow or subtle border brightening, never jarring color shifts
-- Decorative touches: minimal arcane-feeling geometric or annotation-style flourishes (restrained)
+- Cards and panels: deep stone surface, subtle cold border, soft moonlight inner glow
+- Dividers: stone-stroke style — thin, cool-toned, slightly transparent
+- Shadows: layered cold-dark with blue undertone (not warm/sepia)
+- Hover/interactive states: crimson glow or subtle border brightening, never jarring color shifts
+- Decorative touches: minimal gothic geometric or lattice-style flourishes (restrained)
 
 **Anti-references — Saga must NEVER look like:**
 
@@ -215,20 +215,21 @@ before color. Every heading must earn its display treatment.
 - Neon / cyberpunk UI
 - Gamified dashboards (XP bars, achievement badges, leveling chrome)
 - Tropical / coastal aesthetics (lagoon blues, palm greens, sandy pastels — fully retired)
+- Warm amber/gold grimoire aesthetic (previous theme — fully retired)
 
 ### Design Principles
 
-1. **Typography First** — Hierarchy is built from type, not color blasts. Fraunces earns its
+1. **Typography First** — Hierarchy is built from type, not color blasts. Cinzel earns its
    display moments. Every label, heading, and body span should feel deliberate.
 
 2. **Atmospheric but Functional** — The interface sets a mood without sacrificing usability.
    Texture and shadow create depth; the DM's content (campaigns, NPCs, sessions) is always the hero.
 
-3. **Ink Over Chrome** — Prefer warm-dark surfaces, sepia borders, and shadow depth over
-   glass-morphism and bright gradients. Components feel crafted and grounded.
+3. **Stone Over Chrome** — Prefer cold-dark surfaces, cool borders, and shadow depth over
+   glass-morphism and bright gradients. Components feel carved and grounded.
 
 4. **Dark Mode is Canon** — All new components are designed dark-first. Light mode should evoke
-   aged parchment and cream.
+   cold stone and muted silver.
 
-5. **Quiet Confidence** — No excessive animation, badges, or gamification. Motion is purposeful
+5. **Quiet Reverence** — No excessive animation, badges, or gamification. Motion is purposeful
    and minimal. The tool respects the DM's creative focus and never competes with their content.
