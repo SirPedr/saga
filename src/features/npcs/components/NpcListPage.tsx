@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react'
 import { useParams } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Plus } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -9,13 +9,22 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
+import { Button } from '#/components/ui/button'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '#/components/ui/sheet'
 import { cn } from '#/lib/utils'
 import { npcListQueryOptions } from '../server/queries'
 import { NpcTemplateEditor } from './NpcTemplateEditor'
+import { CreateNpcForm } from './CreateNpcForm'
 
 export function NpcListPage() {
   const { campaignId } = useParams({ from: '/campaigns/$campaignId' })
   const [templateOpen, setTemplateOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
   const { data: npcs = [] } = useQuery(npcListQueryOptions(campaignId))
 
   return (
@@ -32,6 +41,10 @@ export function NpcListPage() {
             Characters that inhabit your world
           </p>
         </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus className="mr-2 size-4" aria-hidden="true" />
+          Create NPC
+        </Button>
       </div>
 
       {/* Collapsible Template Editor */}
@@ -95,6 +108,21 @@ export function NpcListPage() {
           {/* NPC cards — future issue */}
         </div>
       )}
+
+      {/* Create NPC Sheet */}
+      <Sheet open={createOpen} onOpenChange={setCreateOpen}>
+        <SheetContent className="overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="font-display">Create NPC</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <CreateNpcForm
+              campaignId={campaignId}
+              onSuccess={() => setCreateOpen(false)}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
     </section>
   )
 }
